@@ -1,0 +1,46 @@
+ENQUIRY CLASSIFICATION RULES FOR SALES TEAM
+
+Classification Categories:
+There are three types of enquiries based on completeness of information.
+
+1. NO-DETAILED ENQUIRY
+Definition: Enquiries that lack sufficient information to process.
+Criteria:
+- Missing contact details (no email, phone, or name)
+- Incomplete or no training information
+- Vague or unclear requirements
+- No specific training course mentioned
+- Missing both contact information AND training details
+
+2. SEMI-DETAILED ENQUIRY
+Definition: Enquiries that have partial information but are missing key details.
+Criteria:
+- Has contact details (email, phone, or name) BUT no training information
+- Has training information BUT missing contact details
+- Has some details but not complete enough to process
+- One aspect is detailed while the other is missing
+
+3. DETAILED ENQUIRY
+Definition: Complete enquiries ready for processing.
+Criteria:
+- Complete contact details (name, email, and/or phone number)
+- Detailed training requirement information including:
+  * Specific training course or topic
+  * Number of participants
+  * Preferred dates or timeframe
+  * Training objectives or specific needs
+- All necessary information to proceed with a proposal
+
+Examples:
+
+NO-DETAILED ENQUIRY Example:
+"I want training for my team"
+(No contact info, no specific training details)
+
+SEMI-DETAILED ENQUIRY Example:
+"Hi, I'm John Smith (john@company.com). I need training for my team."
+(Has contact but no training details)
+
+DETAILED ENQUIRY Example:
+"Hello, I'm Sarah Johnson from ABC Corp (sarah@abccorp.com, +1-555-0123). We need Python programming training for 15 employees in January 2024. We want to focus on data analysis and automation skills."
+(Complete contact and detailed training requirements)
