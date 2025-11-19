@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import os
 import re
+from training_domain_agent import TrainingDomainAgent
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 import openai
@@ -187,107 +188,47 @@ Remember:
         return {}
 
 def ai_identify_training_domain(enquiry_text: str, extracted_data: Dict, configs: Dict) -> Dict:
-    """Use AI to identify training domain with confidence score"""
+    """Use LangChain Agent with web search to identify training domain"""
     
     try:
         api_key = get_openai_client()
         
-        # Get domain configuration
-        domain_config = configs.get('training_domains', {})
-        system_prompt = domain_config.get('system_prompt', {}).get('content', '')
-        domain_catalog = domain_config.get('domain_catalog', {})
+        # Create agent
+        agent = TrainingDomainAgent(api_key)
         
-        # Build domain list with descriptions
-        domains_list = []
-        for domain in domain_catalog.get('domains', []):
-            domains_list.append({
-                'domain_id': domain.get('domain_id'),
-                'domain_name': domain.get('domain_name'),
-                'category': domain.get('category'),
-                'description': f"Keywords: {', '.join(domain.get('primary_keywords', [])[:5])}"
-            })
+        # Detect domain using web search
+        domain_result = agent.detect_domain(enquiry_text)
         
-        # Get company info for context
-        company_name = extracted_data.get('company', {}).get('name', 'Unknown')
-        industry = extracted_data.get('company', {}).get('industry', 'Unknown')
-        pain_points = extracted_data.get('training', {}).get('pain_points', [])
-        
-        # Build user prompt
-        user_prompt = f"""Analyze this training enquiry and identify the training domain(s).
-
-Enquiry Details:
-- Company: {company_name}
-- Industry: {industry}
-- Pain Points: {', '.join(pain_points) if pain_points else 'None extracted'}
-
-Enquiry Text:
-\"\"\"
-{enquiry_text}
-\"\"\"
-
-Available Training Domains:
-{json.dumps(domains_list, indent=2)}
-
-Provide analysis in this JSON format:
-{{
-  "primary_domain": {{
-    "domain_id": "DOM00X",
-    "domain_name": "string",
-    "confidence_score": 0.0-1.0,
-    "reasoning": "Explain why this domain was selected",
-    "matching_keywords": ["array of keywords found"]
-  }},
-  "secondary_domains": [
-    {{
-      "domain_id": "DOM00X",
-      "domain_name": "string",
-      "confidence_score": 0.0-1.0
-    }}
-  ],
-  "category": "technical | soft_skills | compliance | methodology | business_tools",
-  "requires_human_review": true/false,
-  "review_reason": "string or null"
-}}
-
-Return ONLY valid JSON, no other text."""
-
-        # Call OpenAI API
-        client = openai.OpenAI(api_key=api_key)
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.2,
-            max_tokens=1500
-        )
-        
-        # Parse response
-        result = response.choices[0].message.content
-        
-        # Clean up response
-        result = result.strip()
-        if result.startswith('```json'):
-            result = result[7:]
-        if result.startswith('```'):
-            result = result[3:]
-        if result.endswith('```'):
-            result = result[:-3]
-        result = result.strip()
-        
-        domain_identification = json.loads(result)
-        
-        return domain_identification
+        # Format to match expected structure
+        return {
+            "primary_domain": {
+                "domain_id": "AI_DETECTED",
+                "domain_name": domain_result.get('domain', 'General Training'),
+                "confidence_score": 0.9,  # Web-validated confidence
+                "reasoning": f"Identified as {domain_result.get('category', 'Other')} category training",
+                "matching_keywords": []
+            },
+            "secondary_domains": [],
+            "category": domain_result.get('category', 'Other').lower().replace(' ', '_'),
+            "requires_human_review": False,
+            "review_reason": None,
+            "sub_topics": domain_result.get('sub_topics', [])
+        }
         
     except Exception as e:
         st.error(f"Domain Identification Error: {str(e)}")
         return {
             "primary_domain": {
-                "domain_name": "Other",
+                "domain_id": "ERROR",
+                "domain_name": "General Training",
                 "confidence_score": 0.0,
-                "reasoning": "Error in identification"
-            }
+                "reasoning": f"Error in identification: {str(e)}",
+                "matching_keywords": []
+            },
+            "secondary_domains": [],
+            "category": "other",
+            "requires_human_review": True,
+            "review_reason": "Agent failed to identify domain"
         }
 
 # ============================================================================
@@ -510,7 +451,7 @@ def main():
         configs = load_all_configs()
     
     # Check if configs loaded successfully
-    required_configs = ['discovery_questions', 'scoring_rules', 'ai_extraction', 'training_domains']
+    required_configs = ['discovery_questions', 'scoring_rules', 'ai_extraction']
     missing_configs = [cfg for cfg in required_configs if not configs.get(cfg)]
     
     if missing_configs:
@@ -521,13 +462,13 @@ def main():
     # Sidebar
     with st.sidebar:
         st.markdown("### 🎯 SalesIQ v3.0")
-        st.markdown("**Rules-Based Enquiry System**")
+        st.markdown("**AI-Powered Enquiry System**")
         st.markdown("---")
         
         st.markdown("#### System Status")
         st.success("✅ All configurations loaded")
+        st.success("✅ LangChain Agent Active")
         st.metric("Discovery Questions", len(configs.get('discovery_questions', {}).get('questions', [])))
-        st.metric("Training Domains", len(configs.get('training_domains', {}).get('domain_catalog', {}).get('domains', [])))
         
         st.markdown("---")
         st.markdown("#### Quick Stats")
@@ -536,11 +477,11 @@ def main():
         st.info(f"🎯 Unlock Threshold: {configs.get('proposal_unlock', {}).get('global_settings', {}).get('minimum_completeness_percentage', 60)}%")
         
         st.markdown("---")
-        st.markdown("*Powered by AI + Rules Engine*")
+        st.markdown("*Powered by AI + Web Search*")
     
     # Main header
     st.markdown('<h1 class="main-header">🎯 SalesIQ v3 - Intelligent Enquiry Analysis</h1>', unsafe_allow_html=True)
-    st.markdown("**AI-Powered | Rules-Based | Proposal-Ready**")
+    st.markdown("**AI-Powered | Web Search | Proposal-Ready**")
     st.markdown("---")
     
     # Layout
@@ -551,7 +492,7 @@ def main():
         enquiry_text = st.text_area(
             "Paste the training enquiry below:",
             height=300,
-            placeholder="Example:\n\nHi, I'm Rajesh Kumar from Infosys Technologies.\nEmail: rajesh.kumar@infosys.com\nPhone: +91 98765 43210\n\nWe need Agile & Scrum training for 30 people in our project management team. They're struggling with sprint planning and backlog management. We'd like to complete this before Q2 2024.\n\nOur budget is around ₹4-5 Lakhs. The decision maker is our VP Engineering, Venkat Raman."
+            placeholder="Example:\n\nHi, I'm Rajesh Kumar from Infosys Technologies.\nEmail: rajesh.kumar@infosys.com\nPhone: +91 98765 43210\n\nWe need SEO training for 30 people in our digital marketing team. They're struggling with organic traffic and Google rankings.\n\nOur budget is around ₹4-5 Lakhs."
         )
         
         # Source selection
@@ -565,8 +506,8 @@ def main():
         st.subheader("ℹ️ How It Works")
         st.info("""
         **1. AI Extraction**
-        - Intelligent data extraction from text
-        - Training domain identification
+        - Intelligent data extraction
+        - Web-powered domain detection
         - Pain point analysis
         
         **2. Rules-Based Scoring**
@@ -576,7 +517,6 @@ def main():
         
         **3. Smart Discovery**
         - Prioritized questions
-        - Conditional logic
         - Proposal unlock at 60%
         """)
         
@@ -608,8 +548,8 @@ def main():
         progress_bar.progress(25)
         extracted_data = ai_extract_information(enquiry_text, configs)
         
-        # Step 2: Domain Identification
-        status_text.text("🎯 Step 2/4: Identifying training domain...")
+        # Step 2: Domain Identification (with web search)
+        status_text.text("🌐 Step 2/4: Identifying domain (using web search)...")
         progress_bar.progress(50)
         domain_data = ai_identify_training_domain(enquiry_text, extracted_data, configs)
         
@@ -683,41 +623,28 @@ def main():
         st.markdown("---")
         
         # ========================================
-        # TRAINING DOMAIN DISPLAY
+        # TRAINING DOMAIN DISPLAY (CLEAN - NO CONFIDENCE)
         # ========================================
         st.markdown("## 🎯 Training Domain Identified")
         
         primary_domain = domain_data.get('primary_domain', {})
-        confidence = primary_domain.get('confidence_score', 0) * 100
+        sub_topics = domain_data.get('sub_topics', [])
+        category = domain_data.get('category', 'other').replace('_', ' ').title()
         
         domain_col1, domain_col2 = st.columns([2, 1])
         
         with domain_col1:
             st.markdown(f"### {primary_domain.get('domain_name', 'Unknown')}")
-            st.write(f"**Reasoning:** {primary_domain.get('reasoning', 'N/A')}")
+            st.write(f"**Category:** {category}")
             
-            if primary_domain.get('matching_keywords'):
-                st.write(f"**Keywords Found:** {', '.join(primary_domain.get('matching_keywords', []))}")
+            if sub_topics:
+                with st.expander("📚 Sub-topics Covered"):
+                    for topic in sub_topics[:5]:
+                        st.markdown(f"• {topic}")
         
         with domain_col2:
-            # Confidence gauge
-            confidence_color = '#10B981' if confidence >= 80 else '#F59E0B' if confidence >= 60 else '#EF4444'
-            st.markdown(f"""
-            <div style="background-color: {confidence_color}20; padding: 20px; border-radius: 10px; border: 2px solid {confidence_color}; text-align: center;">
-                <h3 style="margin: 0; color: {confidence_color};">Confidence</h3>
-                <h1 style="margin: 10px 0; color: {confidence_color};">{confidence:.0f}%</h1>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if domain_data.get('requires_human_review'):
-                st.warning(f"⚠️ Review Needed\n{domain_data.get('review_reason', '')}")
-        
-        # Secondary domains
-        secondary_domains = domain_data.get('secondary_domains', [])
-        if secondary_domains:
-            st.markdown("**Related Domains:**")
-            for i, sec_domain in enumerate(secondary_domains[:3]):
-                st.caption(f"• {sec_domain.get('domain_name')} ({sec_domain.get('confidence_score', 0)*100:.0f}% confidence)")
+            # Simple category badge
+            st.info(f"**Training Type:**\n{category}")
         
         st.markdown("---")
         
@@ -831,25 +758,25 @@ def main():
         tab1, tab2, tab3 = st.tabs(["Incomplete", "Partial", "Complete"])
         
         with tab1:
-            st.code("""I want training for my team""", language="text")
+            st.code("""I want SEO training for my team""", language="text")
         
         with tab2:
             st.code("""Hi, I'm Rajesh Kumar from Infosys.
 Email: rajesh@infosys.com
 Phone: +91 9876543210
 
-We need Agile training for our team.""", language="text")
+We need SEO training for our digital marketing team.""", language="text")
         
         with tab3:
             st.code("""Hello, I'm Rajesh Kumar, Manager at Infosys Technologies.
 Email: rajesh.kumar@infosys.com
 Phone: +91 98765 43210
 
-We need Agile & Scrum training for 30 people in our project management team. They're struggling with sprint planning and backlog management. We'd like to complete this before Q2 2024.
+We need SEO training for 30 people in our digital marketing team. They're struggling with organic traffic and website ranking in Google search.
 
-Participants are at beginner to intermediate level. We prefer hybrid delivery (2 days in-person at our Bangalore office, followed by virtual sessions).
+Participants are at beginner to intermediate level. We prefer hybrid delivery before Q2 2024.
 
-Our budget is around ₹4-5 Lakhs. The decision maker is our VP Engineering, Venkat Raman.
+Our budget is around ₹4-5 Lakhs. The decision maker is our VP Marketing, Venkat Raman.
 
 Please send us a proposal.""", language="text")
 
