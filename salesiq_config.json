@@ -1,0 +1,1236 @@
+{
+"version": "1.0.0",
+"configName": "SalesIQ Default Configuration",
+"lastUpdated": "2025-01-19",
+
+"scoringConfiguration": {
+"totalPoints": 100,
+"categories": [
+{
+"id": "cat_001",
+"name": "Contact Information",
+"points": 20,
+"color": "#3B82F6",
+"icon": "user",
+"description": "Essential contact and company details"
+},
+{
+"id": "cat_002",
+"name": "Training Requirements",
+"points": 30,
+"color": "#10B981",
+"icon": "book-open",
+"description": "Core training needs and objectives"
+},
+{
+"id": "cat_003",
+"name": "Delivery Preferences",
+"points": 20,
+"color": "#F59E0B",
+"icon": "truck",
+"description": "How and when training will be delivered"
+},
+{
+"id": "cat_004",
+"name": "Commercial Details",
+"points": 30,
+"color": "#8B5CF6",
+"icon": "dollar-sign",
+"description": "Budget, decision makers, and timeline"
+}
+],
+"thresholds": {
+"incomplete": {
+"min": 0,
+"max": 30,
+"label": "Incomplete",
+"color": "#EF4444",
+"icon": "🔴"
+},
+"semiComplete": {
+"min": 31,
+"max": 60,
+"label": "In Progress",
+"color": "#F59E0B",
+"icon": "🟡"
+},
+"complete": {
+"min": 61,
+"max": 100,
+"label": "Complete",
+"color": "#10B981",
+"icon": "🟢"
+}
+},
+"proposalUnlockThreshold": 60,
+"mandatoryFieldsRequired": 8
+},
+
+"questions": [
+{
+"id": "Q001",
+"questionText": "What is the contact person's full name?",
+"category": "cat_001",
+"priority": "CRITICAL",
+"points": 5,
+"isRequired": true,
+"inputType": "TEXT",
+"dataField": "contact_name",
+"helpText": "We need the full name to personalize the proposal",
+"aiExtractionHint": "Look for person's name in email signature, opening greeting, or 'From' field",
+"placeholder": "e.g., Rajesh Kumar",
+"validationRules": {
+"minLength": 2,
+"maxLength": 100,
+"pattern": "^[a-zA-Z\\s.]+$"
+},
+"displayCondition": null
+},
+{
+"id": "Q002",
+"questionText": "What is the contact person's designation/role?",
+"category": "cat_001",
+"priority": "HIGH",
+"points": 3,
+"isRequired": false,
+"inputType": "TEXT",
+"dataField": "contact_designation",
+"helpText": "Knowing their role helps us tailor the communication",
+"aiExtractionHint": "Look for job title in signature or mentioned in context",
+"placeholder": "e.g., Manager - Learning & Development",
+"displayCondition": null
+},
+{
+"id": "Q003",
+"questionText": "What is the contact email address?",
+"category": "cat_001",
+"priority": "CRITICAL",
+"points": 5,
+"isRequired": true,
+"inputType": "EMAIL",
+"dataField": "contact_email",
+"helpText": "We'll send the proposal to this email",
+"aiExtractionHint": "Extract from sender email or explicitly mentioned email address",
+"placeholder": "e.g., rajesh.kumar@company.com",
+"validationRules": {
+"pattern": "^[\\w.-]+@[\\w.-]+\\.\\w{2,}$"
+},
+"displayCondition": null
+},
+{
+"id": "Q004",
+"questionText": "What is the contact phone number?",
+"category": "cat_001",
+"priority": "HIGH",
+"points": 2,
+"isRequired": false,
+"inputType": "PHONE",
+"dataField": "contact_phone",
+"helpText": "For quick clarifications and follow-ups",
+"aiExtractionHint": "Look for phone numbers in signature or body (Indian format +91 or 10 digits)",
+"placeholder": "e.g., +91 98765 43210",
+"displayCondition": null
+},
+{
+"id": "Q005",
+"questionText": "What is the company/organization name?",
+"category": "cat_001",
+"priority": "CRITICAL",
+"points": 5,
+"isRequired": true,
+"inputType": "TEXT",
+"dataField": "company_name",
+"helpText": "Helps us understand your organization's context",
+"aiExtractionHint": "Extract from email domain, signature, or explicitly mentioned company name",
+"placeholder": "e.g., Infosys Technologies Ltd",
+"displayCondition": null
+},
+{
+"id": "Q006",
+"questionText": "Which industry does your organization operate in?",
+"category": "cat_001",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "industry",
+"helpText": "Helps us provide industry-specific examples",
+"aiExtractionHint": "Infer from company name or context clues",
+"options": [
+"IT & Software",
+"Banking & Finance",
+"Healthcare",
+"Manufacturing",
+"Retail & E-commerce",
+"Consulting",
+"Education",
+"Telecom",
+"Government",
+"Other"
+],
+"displayCondition": null
+},
+{
+"id": "Q007",
+"questionText": "What is your company's approximate employee size?",
+"category": "cat_001",
+"priority": "LOW",
+"points": 1,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "company_size",
+"helpText": "Helps us understand scale and organizational complexity",
+"options": [
+"1-50",
+"51-200",
+"201-500",
+"501-1000",
+"1001-5000",
+"5000+"
+],
+"displayCondition": null
+},
+{
+"id": "Q008",
+"questionText": "What training topic or domain are you interested in?",
+"category": "cat_002",
+"priority": "CRITICAL",
+"points": 10,
+"isRequired": true,
+"inputType": "SELECT",
+"dataField": "training_domain",
+"helpText": "This determines the curriculum and trainers",
+"aiExtractionHint": "Look for keywords like 'Agile', 'Leadership', 'Data Science', 'DevOps' etc.",
+"options": [
+"Agile & Scrum",
+"Leadership & Management",
+"Data Science & ML",
+"Cloud Computing (AWS/Azure/GCP)",
+"DevOps & CI/CD",
+"Project Management",
+"Digital Marketing",
+"Cybersecurity",
+"Business Analysis",
+"Soft Skills & Communication",
+"Sales Training",
+"Customer Service",
+"HR & Talent Management",
+"Finance & Accounting",
+"Other"
+],
+"displayCondition": null
+},
+{
+"id": "Q009",
+"questionText": "Could you describe the main challenge or problem you're trying to solve?",
+"category": "cat_002",
+"priority": "CRITICAL",
+"points": 8,
+"isRequired": true,
+"inputType": "TEXTAREA",
+"dataField": "pain_point",
+"helpText": "Understanding your challenge helps us customize the solution",
+"aiExtractionHint": "Look for phrases like 'struggling with', 'challenge', 'problem', 'need help with'",
+"placeholder": "e.g., Our team struggles with sprint planning and delivery estimation",
+"displayCondition": null
+},
+{
+"id": "Q010",
+"questionText": "How many people need to be trained?",
+"category": "cat_002",
+"priority": "CRITICAL",
+"points": 5,
+"isRequired": true,
+"inputType": "NUMBER",
+"dataField": "num_participants",
+"helpText": "This affects pricing and logistics planning",
+"aiExtractionHint": "Look for numbers followed by 'people', 'participants', 'employees', 'team members'",
+"placeholder": "e.g., 25",
+"validationRules": {
+"min": 1,
+"max": 10000
+},
+"displayCondition": null
+},
+{
+"id": "Q011",
+"questionText": "What is the current skill level of participants?",
+"category": "cat_002",
+"priority": "HIGH",
+"points": 4,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "skill_level",
+"helpText": "Helps us pitch the training at the right level",
+"options": [
+"Beginner (No prior experience)",
+"Basic (Some awareness)",
+"Intermediate (Working knowledge)",
+"Advanced (Expert level)",
+"Mixed (Different levels)"
+],
+"displayCondition": null
+},
+{
+"id": "Q012",
+"questionText": "What are the specific learning objectives or outcomes you expect?",
+"category": "cat_002",
+"priority": "HIGH",
+"points": 3,
+"isRequired": false,
+"inputType": "TEXTAREA",
+"dataField": "learning_objectives",
+"helpText": "Helps us design curriculum to meet your exact needs",
+"aiExtractionHint": "Look for phrases with 'should be able to', 'learn how to', 'understand', 'objectives'",
+"placeholder": "e.g., Team should be able to plan and execute 2-week sprints effectively",
+"displayCondition": null
+},
+{
+"id": "Q013",
+"questionText": "Preferred training delivery format?",
+"category": "cat_003",
+"priority": "CRITICAL",
+"points": 8,
+"isRequired": true,
+"inputType": "SELECT",
+"dataField": "delivery_mode",
+"helpText": "This affects logistics and pricing",
+"aiExtractionHint": "Look for keywords: 'online', 'virtual', 'in-person', 'onsite', 'classroom', 'hybrid'",
+"options": [
+"In-Person (At your office)",
+"In-Person (At our facility)",
+"Virtual/Online (VILT)",
+"Hybrid (Mix of both)",
+"Self-paced Online"
+],
+"displayCondition": null
+},
+{
+"id": "Q014",
+"questionText": "What is your preferred training duration?",
+"category": "cat_003",
+"priority": "HIGH",
+"points": 3,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "training_duration",
+"helpText": "Helps us structure the curriculum appropriately",
+"options": [
+"1 Day",
+"2 Days",
+"3 Days",
+"4-5 Days",
+"1 Week",
+"2 Weeks",
+"1 Month",
+"Flexible/Not decided"
+],
+"displayCondition": null
+},
+{
+"id": "Q015",
+"questionText": "What is your preferred training schedule?",
+"category": "cat_003",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "training_schedule",
+"helpText": "Helps us plan trainer availability",
+"options": [
+"Full-day sessions (9 AM - 5 PM)",
+"Half-day sessions (4 hours)",
+"Weekend sessions",
+"Evening sessions (After work hours)",
+"Flexible"
+],
+"displayCondition": null
+},
+{
+"id": "Q016",
+"questionText": "When would you like the training to start?",
+"category": "cat_003",
+"priority": "HIGH",
+"points": 5,
+"isRequired": true,
+"inputType": "DATE",
+"dataField": "preferred_start_date",
+"helpText": "Helps us check trainer availability and plan logistics",
+"aiExtractionHint": "Look for dates, months, quarters (Q1/Q2), or phrases like 'as soon as possible'",
+"placeholder": "Select approximate start date",
+"displayCondition": null
+},
+{
+"id": "Q017",
+"questionText": "Is there a specific deadline or event driving this training?",
+"category": "cat_003",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "TEXTAREA",
+"dataField": "timeline_driver",
+"helpText": "Helps us understand urgency and prioritize accordingly",
+"aiExtractionHint": "Look for urgency indicators: 'urgent', 'ASAP', 'before', 'deadline'",
+"placeholder": "e.g., We're starting a new project in Q2 that requires these skills",
+"displayCondition": null
+},
+{
+"id": "Q018",
+"questionText": "What is your approximate budget range for this training?",
+"category": "cat_004",
+"priority": "HIGH",
+"points": 10,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "budget_range",
+"helpText": "Helps us propose the right solution within your budget",
+"options": [
+"Under ₹1 Lakh",
+"₹1-3 Lakhs",
+"₹3-5 Lakhs",
+"₹5-10 Lakhs",
+"₹10-20 Lakhs",
+"Above ₹20 Lakhs",
+"Not decided yet",
+"Prefer not to disclose"
+],
+"displayCondition": null
+},
+{
+"id": "Q019",
+"questionText": "Who will be the decision maker for this training?",
+"category": "cat_004",
+"priority": "CRITICAL",
+"points": 10,
+"isRequired": true,
+"inputType": "TEXT",
+"dataField": "decision_maker",
+"helpText": "We'll address the proposal to the decision maker",
+"aiExtractionHint": "Look for mentions of 'manager', 'director', 'head of', 'VP', 'reporting to'",
+"placeholder": "e.g., Venkat Raman - VP Engineering",
+"displayCondition": null
+},
+{
+"id": "Q020",
+"questionText": "What is the approval process for training budgets in your organization?",
+"category": "cat_004",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "TEXTAREA",
+"dataField": "approval_process",
+"helpText": "Helps us understand decision timeline and stakeholders",
+"placeholder": "e.g., Manager approval + L&D head sign-off",
+"displayCondition": null
+},
+{
+"id": "Q021",
+"questionText": "Do you require post-training certification for participants?",
+"category": "cat_002",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "certification_required",
+"helpText": "Affects curriculum design and pricing",
+"options": [
+"Yes, industry-recognized certification",
+"Yes, internal completion certificate",
+"No certification needed",
+"Not sure"
+],
+"displayCondition": null
+},
+{
+"id": "Q022",
+"questionText": "Would you like post-training support or follow-up sessions?",
+"category": "cat_003",
+"priority": "LOW",
+"points": 1,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "post_training_support",
+"helpText": "Ongoing support helps with knowledge retention",
+"options": [
+"Yes, include in proposal",
+"Maybe, tell me more",
+"No, not needed",
+"Not decided yet"
+],
+"displayCondition": null
+},
+{
+"id": "Q023",
+"questionText": "For virtual training: What is the participants' time zone?",
+"category": "cat_003",
+"priority": "HIGH",
+"points": 3,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "time_zone",
+"helpText": "Critical for scheduling virtual sessions",
+"options": [
+"IST (India Standard Time)",
+"PST (Pacific)",
+"EST (Eastern)",
+"CST (Central)",
+"GMT (London)",
+"SGT (Singapore)",
+"AEST (Australia)",
+"Other"
+],
+"displayCondition": {
+"field": "delivery_mode",
+"operator": "IN",
+"value": ["Virtual/Online (VILT)", "Hybrid (Mix of both)"]
+}
+},
+{
+"id": "Q024",
+"questionText": "For virtual training: Do you have a preferred platform?",
+"category": "cat_003",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "virtual_platform",
+"helpText": "We can use your preferred platform or provide ours",
+"options": [
+"Zoom",
+"Microsoft Teams",
+"Google Meet",
+"Webex",
+"No preference - you provide",
+"Other"
+],
+"displayCondition": {
+"field": "delivery_mode",
+"operator": "IN",
+"value": ["Virtual/Online (VILT)", "Hybrid (Mix of both)"]
+}
+},
+{
+"id": "Q025",
+"questionText": "For virtual training: Who will provide the platform license?",
+"category": "cat_003",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "platform_provider",
+"helpText": "Affects overall cost and logistics",
+"options": [
+"We'll provide our platform",
+"Please include platform cost in proposal",
+"Not decided yet"
+],
+"displayCondition": {
+"field": "delivery_mode",
+"operator": "IN",
+"value": ["Virtual/Online (VILT)", "Hybrid (Mix of both)"]
+}
+},
+{
+"id": "Q026",
+"questionText": "For in-person training: What is the venue address?",
+"category": "cat_003",
+"priority": "HIGH",
+"points": 3,
+"isRequired": false,
+"inputType": "TEXTAREA",
+"dataField": "venue_address",
+"helpText": "For trainer logistics and material shipping",
+"placeholder": "Full address with city and pincode",
+"displayCondition": {
+"field": "delivery_mode",
+"operator": "IN",
+"value": ["In-Person (At your office)", "Hybrid (Mix of both)"]
+}
+},
+{
+"id": "Q027",
+"questionText": "For in-person training: Do you have a training room with required facilities?",
+"category": "cat_003",
+"priority": "MEDIUM",
+"points": 2,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "training_facilities",
+"helpText": "We need projector, whiteboard, power outlets, WiFi",
+"options": [
+"Yes, fully equipped training room",
+"Partially - need some arrangements",
+"No - please advise on requirements",
+"Not sure"
+],
+"displayCondition": {
+"field": "delivery_mode",
+"operator": "IN",
+"value": ["In-Person (At your office)", "Hybrid (Mix of both)"]
+}
+},
+{
+"id": "Q028",
+"questionText": "For technical training: Do participants need lab/sandbox environment?",
+"category": "cat_002",
+"priority": "HIGH",
+"points": 5,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "lab_required",
+"helpText": "Hands-on practice environment for technical topics",
+"options": [
+"Yes, please provide cloud lab access",
+"We have our own lab environment",
+"Not needed",
+"Not sure"
+],
+"displayCondition": {
+"field": "training_domain",
+"operator": "IN",
+"value": ["Data Science & ML", "Cloud Computing (AWS/Azure/GCP)", "DevOps & CI/CD", "Cybersecurity"]
+}
+},
+{
+"id": "Q029",
+"questionText": "For technical training: What is participants' technical background?",
+"category": "cat_002",
+"priority": "HIGH",
+"points": 4,
+"isRequired": false,
+"inputType": "TEXTAREA",
+"dataField": "technical_background",
+"helpText": "Helps trainers prepare appropriately",
+"placeholder": "e.g., Java developers with 2-3 years experience, no Python knowledge",
+"displayCondition": {
+"field": "training_domain",
+"operator": "IN",
+"value": ["Data Science & ML", "Cloud Computing (AWS/Azure/GCP)", "DevOps & CI/CD"]
+}
+},
+{
+"id": "Q030",
+"questionText": "How did you hear about us?",
+"category": "cat_001",
+"priority": "LOW",
+"points": 1,
+"isRequired": false,
+"inputType": "SELECT",
+"dataField": "lead_source",
+"helpText": "Helps us understand our marketing effectiveness",
+"options": [
+"Google Search",
+"LinkedIn",
+"Referral from colleague",
+"Previous customer",
+"Email campaign",
+"Conference/Event",
+"Other"
+],
+"displayCondition": null
+}
+],
+
+"conditionalRules": [
+{
+"id": "RULE_001",
+"name": "Virtual Training Platform Questions",
+"description": "Show platform-related questions when delivery mode is Virtual or Hybrid",
+"priority": 1,
+"isActive": true,
+"conditions": {
+"operator": "OR",
+"rules": [
+{
+"field": "delivery_mode",
+"operator": "EQUALS",
+"value": "Virtual/Online (VILT)"
+},
+{
+"field": "delivery_mode",
+"operator": "EQUALS",
+"value": "Hybrid (Mix of both)"
+}
+]
+},
+"actions": [
+{
+"type": "SHOW_QUESTIONS",
+"questionIds": ["Q023", "Q024", "Q025"]
+},
+{
+"type": "HIDE_QUESTIONS",
+"questionIds": ["Q026", "Q027"]
+},
+{
+"type": "REQUIRE_FIELD",
+"field": "time_zone"
+}
+]
+},
+{
+"id": "RULE_002",
+"name": "In-Person Training Venue Questions",
+"description": "Show venue questions for in-person training",
+"priority": 1,
+"isActive": true,
+"conditions": {
+"operator": "OR",
+"rules": [
+{
+"field": "delivery_mode",
+"operator": "EQUALS",
+"value": "In-Person (At your office)"
+},
+{
+"field": "delivery_mode",
+"operator": "EQUALS",
+"value": "Hybrid (Mix of both)"
+}
+]
+},
+"actions": [
+{
+"type": "SHOW_QUESTIONS",
+"questionIds": ["Q026", "Q027"]
+},
+{
+"type": "HIDE_QUESTIONS",
+"questionIds": ["Q024", "Q025"]
+}
+]
+},
+{
+"id": "RULE_003",
+"name": "Technical Training Requirements",
+"description": "Show technical questions for technical domains",
+"priority": 2,
+"isActive": true,
+"conditions": {
+"operator": "OR",
+"rules": [
+{
+"field": "training_domain",
+"operator": "EQUALS",
+"value": "Data Science & ML"
+},
+{
+"field": "training_domain",
+"operator": "EQUALS",
+"value": "Cloud Computing (AWS/Azure/GCP)"
+},
+{
+"field": "training_domain",
+"operator": "EQUALS",
+"value": "DevOps & CI/CD"
+},
+{
+"field": "training_domain",
+"operator": "EQUALS",
+"value": "Cybersecurity"
+}
+]
+},
+"actions": [
+{
+"type": "SHOW_QUESTIONS",
+"questionIds": ["Q028", "Q029"]
+},
+{
+"type": "REQUIRE_FIELD",
+"field": "technical_background"
+},
+{
+"type": "ADD_POINTS",
+"category": "cat_002",
+"points": 2,
+"condition": "IF technical_background IS_FILLED"
+}
+]
+},
+{
+"id": "RULE_004",
+"name": "Large Group Virtual Warning",
+"description": "Warn about large virtual training groups",
+"priority": 3,
+"isActive": true,
+"conditions": {
+"operator": "AND",
+"rules": [
+{
+"field": "delivery_mode",
+"operator": "EQUALS",
+"value": "Virtual/Online (VILT)"
+},
+{
+"field": "num_participants",
+"operator": "GREATER_THAN",
+"value": 50
+}
+]
+},
+"actions": [
+{
+"type": "SHOW_WARNING",
+"message": "For large virtual audiences (50+), we recommend breakout room sessions and multiple trainers. This will be reflected in the proposal."
+},
+{
+"type": "SUGGEST_ACTION",
+"suggestion": "Consider splitting into multiple smaller batches for better engagement"
+}
+]
+},
+{
+"id": "RULE_005",
+"name": "Budget Guidance - High Participant Count",
+"description": "Provide budget guidance for large groups",
+"priority": 3,
+"isActive": true,
+"conditions": {
+"operator": "AND",
+"rules": [
+{
+"field": "num_participants",
+"operator": "GREATER_THAN",
+"value": 100
+}
+]
+},
+"actions": [
+{
+"type": "SHOW_TIP",
+"message": "For groups over 100 participants, we typically offer volume discounts. This will be reflected in the pricing."
+}
+]
+},
+{
+"id": "RULE_006",
+"name": "Urgent Timeline Alert",
+"description": "Alert for urgent training requests",
+"priority": 4,
+"isActive": true,
+"conditions": {
+"operator": "OR",
+"rules": [
+{
+"field": "timeline_driver",
+"operator": "CONTAINS",
+"value": "urgent"
+},
+{
+"field": "timeline_driver",
+"operator": "CONTAINS",
+"value": "ASAP"
+}
+]
+},
+"actions": [
+{
+"type": "NOTIFY_MANAGER",
+"message": "Urgent training request - expedite proposal"
+},
+{
+"type": "SET_PRIORITY",
+"value": "HIGH"
+}
+]
+}
+],
+
+"trainingDomains": [
+{
+"id": "DOMAIN_001",
+"name": "Agile & Scrum",
+"category": "PROCESS",
+"description": "Agile methodologies, Scrum framework, sprint planning, and iterative development",
+"icon": "🏃",
+"color": "#3B82F6",
+"keywords": ["agile", "scrum", "sprint", "kanban", "iterative", "user stories"],
+"isActive": true,
+"painPoints": [
+"Team struggles with sprint planning and estimation",
+"Difficulty in adapting to changing requirements",
+"Poor communication between development and stakeholders",
+"Inconsistent sprint velocity",
+"Challenges with backlog grooming and prioritization"
+],
+"curriculum": {
+"duration": "3 Days",
+"modules": [
+{
+"day": 1,
+"title": "Agile Fundamentals",
+"topics": ["Agile mindset", "Scrum framework", "Roles and responsibilities", "Artifacts"]
+},
+{
+"day": 2,
+"title": "Scrum Events & Practices",
+"topics": ["Sprint planning", "Daily standups", "Sprint review", "Retrospectives", "Estimation techniques"]
+},
+{
+"day": 3,
+"title": "Advanced Topics & Practice",
+"topics": ["Scaling Agile", "Handling distributed teams", "Metrics", "Hands-on simulation"]
+}
+]
+},
+"pricingGuidance": {
+"perParticipant": {
+"min": 12000,
+"max": 18000,
+"currency": "INR"
+},
+"typicalDuration": "3 days",
+"includes": ["Course materials", "Simulation exercises", "Completion certificate"]
+},
+"technicalRequirements": null,
+"successMetrics": [
+"Sprint velocity improvement",
+"Reduced sprint scope changes",
+"Team satisfaction scores",
+"On-time delivery rate"
+]
+},
+{
+"id": "DOMAIN_002",
+"name": "Leadership & Management",
+"category": "SOFT_SKILLS",
+"description": "Leadership development, team management, coaching, and strategic thinking",
+"icon": "👔",
+"color": "#8B5CF6",
+"keywords": ["leadership", "management", "coaching", "delegation", "motivation"],
+"isActive": true,
+"painPoints": [
+"New managers lack coaching and delegation skills",
+"Poor team motivation and engagement",
+"Difficulty giving constructive feedback",
+"Challenges in conflict resolution",
+"Strategic thinking gaps"
+],
+"curriculum": {
+"duration": "2 Days",
+"modules": [
+{
+"day": 1,
+"title": "Leadership Foundations",
+"topics": ["Leadership vs Management", "Leadership styles", "Emotional intelligence", "Team dynamics"]
+},
+{
+"day": 2,
+"title": "Management Skills",
+"topics": ["Effective delegation", "Feedback and coaching", "Conflict resolution", "Performance management"]
+}
+]
+},
+"pricingGuidance": {
+"perParticipant": {
+"min": 15000,
+"max": 22000,
+"currency": "INR"
+},
+"typicalDuration": "2 days"
+},
+"technicalRequirements": null,
+"successMetrics": [
+"Team engagement scores",
+"Manager effectiveness ratings",
+"Employee retention improvement",
+"360-degree feedback improvement"
+]
+},
+{
+"id": "DOMAIN_003",
+"name": "Data Science & Machine Learning",
+"category": "TECHNICAL",
+"description": "Python, ML algorithms, data analysis, model deployment",
+"icon": "📊",
+"color": "#10B981",
+"keywords": ["data science", "machine learning", "python", "AI", "analytics", "ML"],
+"isActive": true,
+"painPoints": [
+"Lack of ML expertise in the team",
+"Difficulty deploying models to production",
+"Data preparation and cleaning challenges",
+"Understanding when to use which algorithm",
+"Translating business problems to ML solutions"
+],
+"curriculum": {
+"duration": "5 Days",
+"modules": [
+{
+"day": 1,
+"title": "Python & Data Analysis",
+"topics": ["Python basics", "NumPy, Pandas", "Data visualization", "Data preprocessing"]
+},
+{
+"day": 2,
+"title": "ML Fundamentals",
+"topics": ["Supervised learning", "Regression", "Classification", "Model evaluation"]
+},
+{
+"day": 3,
+"title": "Advanced ML",
+"topics": ["Decision trees", "Random forests", "SVM", "Ensemble methods"]
+},
+{
+"day": 4,
+"title": "Deep Learning Intro",
+"topics": ["Neural networks", "TensorFlow basics", "CNN introduction", "Transfer learning"]
+},
+{
+"day": 5,
+"title": "Hands-on Projects",
+"topics": ["Real-world datasets", "End-to-end ML pipeline", "Model deployment basics"]
+}
+]
+},
+"pricingGuidance": {
+"perParticipant": {
+"min": 20000,
+"max": 30000,
+"currency": "INR"
+},
+"typicalDuration": "5 days",
+"includes": ["Cloud lab access", "Sample datasets", "Course materials", "Certificate"]
+},
+"technicalRequirements": {
+"hardware": "Laptop with 8GB RAM minimum",
+"software": "Python 3.8+, Jupyter Notebook",
+"cloudAccess": "AWS/GCP sandbox (provided)",
+"prerequisites": "Basic programming knowledge helpful"
+},
+"successMetrics": [
+"Pre/post assessment improvement",
+"Projects completed successfully",
+"Model deployment success rate",
+"Team productivity with ML tools"
+]
+},
+{
+"id": "DOMAIN_004",
+"name": "Cloud Computing (AWS)",
+"category": "TECHNICAL",
+"description": "AWS services, cloud architecture, deployment, and management",
+"icon": "☁️",
+"color": "#F59E0B",
+"keywords": ["AWS", "cloud", "EC2", "S3", "lambda", "devops", "infrastructure"],
+"isActive": true,
+"painPoints": [
+"Moving from on-premise to cloud",
+"High AWS costs and optimization challenges",
+"Security and compliance concerns",
+"Difficulty in architecting scalable solutions",
+"Lack of cloud expertise in team"
+],
+"curriculum": {
+"duration": "4 Days",
+"modules": [
+{
+"day": 1,
+"title": "Cloud & AWS Basics",
+"topics": ["Cloud computing fundamentals", "AWS global infrastructure", "IAM", "EC2 basics"]
+},
+{
+"day": 2,
+"title": "Core AWS Services",
+"topics": ["S3", "VPC", "RDS", "Load balancers", "Auto scaling"]
+},
+{
+"day": 3,
+"title": "Advanced Services",
+"topics": ["Lambda", "API Gateway", "CloudFormation", "CloudWatch", "Cost optimization"]
+},
+{
+"day": 4,
+"title": "Architecture & Best Practices",
+"topics": ["Well-architected framework", "Security", "High availability", "Hands-on labs"]
+}
+]
+},
+"pricingGuidance": {
+"perParticipant": {
+"min": 18000,
+"max": 28000,
+"currency": "INR"
+},
+"typicalDuration": "4 days",
+"includes": ["AWS sandbox account", "Hands-on labs", "Course materials"]
+},
+"technicalRequirements": {
+"hardware": "Laptop with internet connection",
+"software": "Modern web browser",
+"cloudAccess": "AWS sandbox (provided)",
+"prerequisites": "Basic Linux knowledge helpful"
+},
+"successMetrics": [
+"AWS certification pass rate",
+"Cloud migration success",
+"Cost optimization achieved",
+"Deployment automation improvement"
+]
+},
+{
+"id": "DOMAIN_005",
+"name": "DevOps & CI/CD",
+"category": "TECHNICAL",
+"description": "DevOps culture, CI/CD pipelines, automation, Docker, Kubernetes",
+"icon": "🔄",
+"color": "#EF4444",
+"keywords": ["devops", "CI/CD", "jenkins", "docker", "kubernetes", "automation"],
+"isActive": true,
+"painPoints": [
+"Manual deployment processes causing delays",
+"Lack of automation in testing and deployment",
+"Frequent production issues",
+"Long feedback cycles",
+"Poor collaboration between dev and ops"
+],
+"curriculum": {
+"duration": "4 Days",
+"modules": [
+{
+"day": 1,
+"title": "DevOps Fundamentals",
+"topics": ["DevOps culture", "Version control (Git)", "Linux basics", "Shell scripting"]
+},
+{
+"day": 2,
+"title": "CI/CD Pipelines",
+"topics": ["Jenkins", "GitLab CI", "Build automation", "Testing automation", "Deployment strategies"]
+},
+{
+"day": 3,
+"title": "Containerization",
+"topics": ["Docker fundamentals", "Container orchestration", "Kubernetes basics", "Microservices"]
+},
+{
+"day": 4,
+"title": "Infrastructure as Code",
+"topics": ["Terraform", "Ansible", "Monitoring", "Logging", "Hands-on projects"]
+}
+]
+},
+"pricingGuidance": {
+"perParticipant": {
+"min": 18000,
+"max": 27000,
+"currency": "INR"
+},
+"typicalDuration": "4 days"
+},
+"technicalRequirements": {
+"hardware": "Laptop with 8GB RAM",
+"software": "Docker Desktop, Git",
+"cloudAccess": "Cloud lab for Kubernetes",
+"prerequisites": "Basic Linux and programming knowledge"
+},
+"successMetrics": [
+"Deployment frequency increase",
+"Reduced deployment time",
+"Production incident reduction",
+"Automated test coverage"
+]
+}
+],
+
+"validationRules": [
+{
+"id": "VAL_001",
+"name": "Email Format Validation",
+"field": "contact_email",
+"rule": "REGEX",
+"pattern": "^[\\w.-]+@[\\w.-]+\\.\\w{2,}$",
+"errorMessage": "Please enter a valid email address"
+},
+{
+"id": "VAL_002",
+"name": "Phone Number Validation",
+"field": "contact_phone",
+"rule": "REGEX",
+"pattern": "^(\\+91[\\s-]?)?[6-9]\\d{9}$",
+"errorMessage": "Please enter a valid Indian phone number"
+},
+{
+"id": "VAL_003",
+"name": "Participant Count Range",
+"field": "num_participants",
+"rule": "RANGE",
+"min": 1,
+"max": 10000,
+"errorMessage": "Participant count must be between 1 and 10,000"
+},
+{
+"id": "VAL_004",
+"name": "Future Date Validation",
+"field": "preferred_start_date",
+"rule": "DATE_FUTURE",
+"errorMessage": "Training start date must be in the future"
+},
+{
+"id": "VAL_005",
+"name": "Budget Reasonability Check",
+"field": "budget_range",
+"rule": "CUSTOM",
+"logic": "IF budget < (num_participants * 10000) THEN WARNING",
+"warningMessage": "Budget seems low for the number of participants. Proposal will include options."
+}
+],
+
+"aiExtractionConfig": {
+"model": "gpt-4",
+"systemPrompt": "You are an expert at extracting structured information from training enquiries. Extract all relevant details with high accuracy and provide confidence scores.",
+"extractionPrompts": {
+"contact_name": "Extract the contact person's full name from email signature or body",
+"contact_email": "Extract email address of the person making the enquiry",
+"company_name": "Identify company/organization name from email domain or explicit mention",
+"training_domain": "Identify the training topic. Match to: Agile, Leadership, Data Science, Cloud, DevOps, etc.",
+"pain_point": "Extract the main problem or challenge they're trying to solve",
+"num_participants": "Find how many people need training (look for numbers + people/participants/employees)",
+"delivery_mode": "Determine if they want online/virtual, in-person/onsite, or hybrid training",
+"preferred_start_date": "Extract any mentioned dates, months, quarters, or urgency indicators",
+"budget_range": "Look for budget mentions, pricing expectations, or cost constraints",
+"decision_maker": "Identify who makes the final decision (often mentioned as reporting to, manager, director)"
+},
+"confidenceThresholds": {
+"high": 0.9,
+"medium": 0.7,
+"low": 0.5
+},
+"fallbackStrategy": "If confidence < 0.7, flag field for manual review"
+},
+
+"notificationTemplates": [
+{
+"id": "NOTIF_001",
+"trigger": "PROPOSAL_READY",
+"recipient": "SALES_REP",
+"subject": "🎉 Proposal Ready for {enquiry_number}",
+"body": "Great job! You've gathered enough information to generate a professional proposal for {company_name}. Click here to review and send."
+},
+{
+"id": "NOTIF_002",
+"trigger": "ENQUIRY_STALE",
+"recipient": "SALES_REP",
+"subject": "⏰ Reminder: Complete discovery for {enquiry_number}",
+"body": "The enquiry from {company_name} is {days_old} days old and only {completeness_score}% complete. Take a few minutes to complete the discovery questions."
+},
+{
+"id": "NOTIF_003",
+"trigger": "HIGH_VALUE_ENQUIRY",
+"recipient": "SALES_MANAGER",
+"subject": "💎 High-value enquiry: {enquiry_number}",
+"body": "New enquiry from {company_name} with {num_participants} participants and budget range {budget_range}. Assigned to {sales_rep_name}."
+}
+],
+
+"metadata": {
+"createdBy": "SalesIQ Admin",
+"createdDate": "2025-01-19",
+"version": "1.0.0",
+"compatibleWithAppVersion": "1.0.0+",
+"totalQuestions": 30,
+"totalRules": 6,
+"totalDomains": 5,
+"estimatedSetupTime": "Instant (auto-import)"
+}
+}

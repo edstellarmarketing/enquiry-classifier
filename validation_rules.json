@@ -1,0 +1,603 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "Validation and business rules for SalesIQ data quality",
+  "field_validations": {
+    "contact_email": {
+      "field_name": "contact_email",
+      "display_name": "Contact Email",
+      "data_type": "email",
+      "required": true,
+      "validations": [
+        {
+          "validation_id": "EMAIL_FORMAT",
+          "rule_type": "regex",
+          "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+          "error_message": "Please enter a valid email address",
+          "severity": "error",
+          "blocking": true
+        },
+        {
+          "validation_id": "EMAIL_DOMAIN_VALID",
+          "rule_type": "dns_check",
+          "check_mx_records": true,
+          "error_message": "Email domain does not exist or cannot receive emails",
+          "severity": "warning",
+          "blocking": false
+        },
+        {
+          "validation_id": "NO_DISPOSABLE_EMAIL",
+          "rule_type": "blacklist_check",
+          "blacklist": [
+            "tempmail.com",
+            "10minutemail.com",
+            "guerrillamail.com",
+            "mailinator.com",
+            "throwaway.email"
+          ],
+          "error_message": "Please use a business email, not a disposable email service",
+          "severity": "error",
+          "blocking": true
+        }
+      ]
+    },
+    "contact_phone": {
+      "field_name": "contact_phone",
+      "display_name": "Contact Phone",
+      "data_type": "phone",
+      "required": false,
+      "validations": [
+        {
+          "validation_id": "PHONE_FORMAT",
+          "rule_type": "regex",
+          "pattern": "^[+]?[0-9\\s\\-\\(\\)]{10,15}$",
+          "error_message": "Please enter a valid phone number (10-15 digits)",
+          "severity": "error",
+          "blocking": true
+        },
+        {
+          "validation_id": "PHONE_MIN_LENGTH",
+          "rule_type": "length",
+          "min_length": 10,
+          "error_message": "Phone number must be at least 10 digits",
+          "severity": "error",
+          "blocking": true
+        }
+      ],
+      "auto_formatting": {
+        "enabled": true,
+        "remove_spaces": false,
+        "add_country_code": false,
+        "format_style": "preserve_original"
+      }
+    },
+    "contact_name": {
+      "field_name": "contact_name",
+      "display_name": "Contact Name",
+      "data_type": "text",
+      "required": true,
+      "validations": [
+        {
+          "validation_id": "NAME_MIN_LENGTH",
+          "rule_type": "length",
+          "min_length": 2,
+          "max_length": 100,
+          "error_message": "Name must be between 2 and 100 characters",
+          "severity": "error",
+          "blocking": true
+        },
+        {
+          "validation_id": "NAME_NO_NUMBERS",
+          "rule_type": "regex",
+          "pattern": "^[a-zA-Z\\s\\.,'\\-]+$",
+          "error_message": "Name should not contain numbers or special characters",
+          "severity": "warning",
+          "blocking": false
+        }
+      ]
+    },
+    "company_name": {
+      "field_name": "company_name",
+      "display_name": "Company Name",
+      "data_type": "text",
+      "required": true,
+      "validations": [
+        {
+          "validation_id": "COMPANY_MIN_LENGTH",
+          "rule_type": "length",
+          "min_length": 2,
+          "max_length": 200,
+          "error_message": "Company name must be between 2 and 200 characters",
+          "severity": "error",
+          "blocking": true
+        }
+      ],
+      "enrichment": {
+        "enabled": true,
+        "verify_company_exists": false,
+        "add_industry_if_known": true,
+        "add_size_if_known": true
+      }
+    },
+    "num_participants": {
+      "field_name": "num_participants",
+      "display_name": "Number of Participants",
+      "data_type": "numeric_or_range",
+      "required": true,
+      "validations": [
+        {
+          "validation_id": "PARTICIPANTS_MIN",
+          "rule_type": "range",
+          "min_value": 1,
+          "max_value": 1000,
+          "error_message": "Number of participants must be between 1 and 1000",
+          "severity": "error",
+          "blocking": true
+        },
+        {
+          "validation_id": "PARTICIPANTS_LARGE_GROUP_WARNING",
+          "rule_type": "threshold",
+          "threshold": 50,
+          "condition": "greater_than",
+          "error_message": "⚠️ Large group (50+). Consider batch training for better outcomes.",
+          "severity": "info",
+          "blocking": false
+        },
+        {
+          "validation_id": "PARTICIPANTS_VERY_LARGE_GROUP",
+          "rule_type": "threshold",
+          "threshold": 100,
+          "condition": "greater_than",
+          "error_message": "⚠️ Very large group. Special planning required. Sales manager approval needed.",
+          "severity": "warning",
+          "blocking": false,
+          "trigger_action": "notify_manager"
+        }
+      ],
+      "parsing_rules": {
+        "accept_exact": true,
+        "accept_ranges": true,
+        "accept_approximate": true,
+        "examples": [
+          "30",
+          "25-30",
+          "~50",
+          "about 40"
+        ]
+      }
+    },
+    "start_date": {
+      "field_name": "start_date",
+      "display_name": "Start Date",
+      "data_type": "date",
+      "required": false,
+      "validations": [
+        {
+          "validation_id": "DATE_NOT_PAST",
+          "rule_type": "date_comparison",
+          "compare_to": "today",
+          "condition": "greater_than_or_equal",
+          "error_message": "Start date cannot be in the past",
+          "severity": "error",
+          "blocking": true
+        },
+        {
+          "validation_id": "DATE_MINIMUM_LEAD_TIME",
+          "rule_type": "date_comparison",
+          "compare_to": "today",
+          "min_days_ahead": 7,
+          "error_message": "⚠️ Start date is less than 7 days away. Very short notice!",
+          "severity": "warning",
+          "blocking": false
+        },
+        {
+          "validation_id": "DATE_SHORT_NOTICE",
+          "rule_type": "date_comparison",
+          "compare_to": "today",
+          "min_days_ahead": 14,
+          "error_message": "💡 Short notice booking (less than 14 days). Check trainer availability.",
+          "severity": "info",
+          "blocking": false
+        }
+      ]
+    },
+    "budget_range": {
+      "field_name": "budget_range",
+      "display_name": "Budget Range",
+      "data_type": "text",
+      "required": false,
+      "validations": [
+        {
+          "validation_id": "BUDGET_CONTAINS_NUMBER",
+          "rule_type": "contains",
+          "must_contain": "number",
+          "error_message": "Budget should include numeric values",
+          "severity": "warning",
+          "blocking": false
+        }
+      ],
+      "parsing_rules": {
+        "extract_numbers": true,
+        "detect_currency": true,
+        "accept_ranges": true,
+        "accept_approximate": true
+      }
+    },
+    "delivery_mode": {
+      "field_name": "delivery_mode",
+      "display_name": "Delivery Mode",
+      "data_type": "enum",
+      "required": true,
+      "allowed_values": [
+        "ILT",
+        "VILT",
+        "Hybrid"
+      ],
+      "validations": [
+        {
+          "validation_id": "MODE_VALID_OPTION",
+          "rule_type": "enum_check",
+          "error_message": "Please select a valid delivery mode (ILT, VILT, or Hybrid)",
+          "severity": "error",
+          "blocking": true
+        }
+      ]
+    },
+    "training_domain": {
+      "field_name": "training_domain",
+      "display_name": "Training Domain",
+      "data_type": "enum",
+      "required": true,
+      "allowed_values": [
+        "Leadership & Management",
+        "Agile & Scrum",
+        "Data Science & Machine Learning",
+        "DevOps & Cloud",
+        "Cybersecurity",
+        "Python Programming",
+        "Java Programming",
+        "Business Intelligence (Power BI / Tableau)",
+        "Excel & Data Analysis",
+        "Communication Skills",
+        "Project Management (PMP / PRINCE2)",
+        "Soft Skills Development",
+        "Customer Service Excellence",
+        "Sales & Negotiation",
+        "Other"
+      ],
+      "validations": [
+        {
+          "validation_id": "DOMAIN_VALID_OPTION",
+          "rule_type": "enum_check",
+          "error_message": "Please select a valid training domain from the list",
+          "severity": "error",
+          "blocking": true
+        }
+      ]
+    }
+  },
+  "business_rules": {
+    "budget_vs_participants_check": {
+      "rule_id": "BIZ_RULE_001",
+      "name": "Budget Reasonability Check",
+      "description": "Warn if budget seems too low for participant count",
+      "enabled": true,
+      "condition": {
+        "fields_required": [
+          "budget_range",
+          "num_participants"
+        ],
+        "logic": "budget_per_participant < minimum_threshold"
+      },
+      "minimum_per_participant": {
+        "leadership": 10000,
+        "technical": 15000,
+        "soft_skills": 8000,
+        "default": 10000
+      },
+      "action": {
+        "type": "warning",
+        "message": "⚠️ Budget appears low for {num_participants} participants. Typical range for {domain}: {suggested_range}",
+        "severity": "medium",
+        "suggest_to_sales": "Budget discussion needed - client expectations may need adjustment"
+      }
+    },
+    "technical_training_sandbox_check": {
+      "rule_id": "BIZ_RULE_002",
+      "name": "Technical Training Infrastructure Check",
+      "description": "Ensure technical requirements are documented for technical training",
+      "enabled": true,
+      "condition": {
+        "field": "training_category",
+        "operator": "equals",
+        "value": "technical"
+      },
+      "action": {
+        "type": "check_field",
+        "field_to_check": "sandbox_required",
+        "if_empty": {
+          "warning_message": "⚠️ Technical training selected but no infrastructure details. Please clarify sandbox/lab requirements.",
+          "severity": "medium",
+          "blocking": false
+        }
+      }
+    },
+    "vilt_platform_requirement": {
+      "rule_id": "BIZ_RULE_003",
+      "name": "VILT Platform Required",
+      "description": "Ensure platform details are captured for virtual training",
+      "enabled": true,
+      "condition": {
+        "field": "delivery_mode",
+        "operator": "in",
+        "values": [
+          "VILT",
+          "Hybrid"
+        ]
+      },
+      "action": {
+        "type": "require_field",
+        "fields": [
+          "platform_preference",
+          "participant_timezone"
+        ],
+        "error_message": "Platform and timezone information required for virtual training",
+        "severity": "high",
+        "blocking": true
+      }
+    },
+    "ilt_location_requirement": {
+      "rule_id": "BIZ_RULE_004",
+      "name": "ILT Location Required",
+      "description": "Ensure location is captured for in-person training",
+      "enabled": true,
+      "condition": {
+        "field": "delivery_mode",
+        "operator": "in",
+        "values": [
+          "ILT",
+          "Hybrid"
+        ]
+      },
+      "action": {
+        "type": "require_field",
+        "fields": [
+          "training_location"
+        ],
+        "error_message": "Training location required for in-person delivery",
+        "severity": "high",
+        "blocking": true
+      }
+    },
+    "urgent_timeline_check": {
+      "rule_id": "BIZ_RULE_005",
+      "name": "Urgent Timeline Flag",
+      "description": "Flag enquiries with very short timelines",
+      "enabled": true,
+      "condition": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "urgency_level",
+            "operator": "equals",
+            "value": "immediate"
+          },
+          {
+            "field": "preferred_timeline",
+            "operator": "contains_any",
+            "values": [
+              "ASAP",
+              "urgent",
+              "immediate"
+            ]
+          },
+          {
+            "field": "start_date",
+            "operator": "within_days",
+            "value": 14
+          }
+        ]
+      },
+      "action": {
+        "type": "set_flag",
+        "flag": "🔥 URGENT",
+        "priority": "high",
+        "notification": {
+          "message": "Urgent enquiry detected - short timeline. Check trainer availability immediately.",
+          "notify_manager": true
+        }
+      }
+    },
+    "large_group_special_handling": {
+      "rule_id": "BIZ_RULE_006",
+      "name": "Large Group Handling",
+      "description": "Special considerations for groups over 50",
+      "enabled": true,
+      "condition": {
+        "field": "num_participants",
+        "operator": "greater_than",
+        "value": 50
+      },
+      "action": {
+        "type": "suggestion",
+        "message": "💡 Large group detected. Consider:",
+        "suggestions": [
+          "Batch training (split into smaller groups)",
+          "Multiple trainers",
+          "Extended duration",
+          "Larger venue or breakout rooms",
+          "Volume pricing discussion"
+        ],
+        "notify_sales": true
+      }
+    },
+    "decision_maker_missing_at_proposal": {
+      "rule_id": "BIZ_RULE_007",
+      "name": "Decision Maker Critical for Proposal",
+      "description": "Block proposal if decision maker not identified",
+      "enabled": true,
+      "condition": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "action": "generate_proposal",
+            "triggered": true
+          },
+          {
+            "field": "decision_maker_name",
+            "operator": "is_empty"
+          }
+        ]
+      },
+      "action": {
+        "type": "block",
+        "error_message": "Decision maker must be identified before generating proposal",
+        "severity": "critical",
+        "blocking": true
+      }
+    },
+    "repeat_client_verification": {
+      "rule_id": "BIZ_RULE_008",
+      "name": "Repeat Client Recognition",
+      "description": "Recognize and flag repeat clients",
+      "enabled": true,
+      "condition": {
+        "field": "company_name",
+        "operator": "exists_in_database",
+        "database": "past_clients"
+      },
+      "action": {
+        "type": "flag",
+        "flag": "🔄 REPEAT CLIENT",
+        "auto_populate": {
+          "fields": [
+            "procurement_process",
+            "decision_maker_name",
+            "platform_preference"
+          ],
+          "source": "previous_enquiries"
+        },
+        "notification": {
+          "message": "Repeat client! Previous training: {last_training}. Auto-populated some fields.",
+          "show_to_user": true
+        }
+      }
+    },
+    "fortune_500_special_handling": {
+      "rule_id": "BIZ_RULE_009",
+      "name": "Fortune 500 Client Recognition",
+      "description": "Flag and provide special handling for Fortune 500 companies",
+      "enabled": true,
+      "condition": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "company_name",
+            "operator": "in_list",
+            "list": "fortune_500_companies"
+          },
+          {
+            "field": "company_size",
+            "operator": "equals",
+            "value": "10000+"
+          }
+        ]
+      },
+      "action": {
+        "type": "flag",
+        "flag": "⭐ ENTERPRISE CLIENT",
+        "priority": "high",
+        "notification": {
+          "message": "Enterprise client detected: {company_name}. Consider premium handling.",
+          "notify_manager": true,
+          "suggestions": [
+            "Senior trainer assignment",
+            "Dedicated account manager",
+            "Custom curriculum design",
+            "Post-training support package"
+          ]
+        }
+      }
+    },
+    "email_domain_company_mismatch": {
+      "rule_id": "BIZ_RULE_010",
+      "name": "Email Domain Verification",
+      "description": "Warn if email domain doesn't match company name",
+      "enabled": true,
+      "condition": {
+        "logic": "email_domain != company_domain"
+      },
+      "action": {
+        "type": "warning",
+        "message": "⚠️ Email domain ({email_domain}) doesn't match company name ({company_name}). Please verify.",
+        "severity": "low",
+        "blocking": false
+      }
+    }
+  },
+  "data_quality_rules": {
+    "duplicate_detection": {
+      "enabled": true,
+      "check_on": "enquiry_create",
+      "match_fields": [
+        "contact_email",
+        "company_name",
+        "training_domain"
+      ],
+      "time_window_days": 30,
+      "action": {
+        "type": "warning",
+        "message": "⚠️ Possible duplicate enquiry detected from same email/company within 30 days. Check existing enquiries.",
+        "show_similar_enquiries": true,
+        "blocking": false
+      }
+    },
+    "data_completeness_tracking": {
+      "enabled": true,
+      "track_over_time": true,
+      "alert_if_stagnant": {
+        "days_without_update": 7,
+        "completeness_below": 50,
+        "action": "reminder"
+      }
+    },
+    "field_consistency_checks": {
+      "check_id": "CONSISTENCY_001",
+      "name": "Timeline vs Start Date Consistency",
+      "description": "Ensure timeline and start date align",
+      "fields": [
+        "preferred_timeline",
+        "start_date"
+      ],
+      "rule": "if both present, verify alignment",
+      "action": {
+        "type": "info",
+        "message": "💡 Timeline says '{preferred_timeline}' but start date is {start_date}. Please verify.",
+        "severity": "low"
+      }
+    }
+  },
+  "auto_correction_rules": {
+    "email_lowercase": {
+      "field": "contact_email",
+      "action": "convert_to_lowercase",
+      "trim_whitespace": true
+    },
+    "phone_formatting": {
+      "field": "contact_phone",
+      "action": "remove_extra_spaces",
+      "preserve_format": true
+    },
+    "company_name_capitalization": {
+      "field": "company_name",
+      "action": "proper_case",
+      "preserve_acronyms": true
+    }
+  },
+  "metadata": {
+    "total_field_validations": 8,
+    "total_business_rules": 10,
+    "critical_blocking_rules": 4,
+    "auto_correction_rules": 3
+  }
+}

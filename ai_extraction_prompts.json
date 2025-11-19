@@ -1,0 +1,601 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "AI prompts and hints for intelligent enquiry extraction and analysis",
+  "ai_model_config": {
+    "default_model": "gpt-4",
+    "fallback_model": "gpt-3.5-turbo",
+    "temperature": 0.3,
+    "max_tokens": 2000,
+    "response_format": "json_object",
+    "timeout_seconds": 30,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 2
+  },
+  "system_prompts": {
+    "primary_system_prompt": {
+      "role": "system",
+      "content": "You are an expert sales analyst for Edstellar, a global corporate training company with 14 years of experience. Your role is to analyze training enquiries and extract structured information to help sales teams create accurate proposals.\n\nKey Principles:\n1. Extract ONLY information that is explicitly stated or strongly implied\n2. Use null for any field where information is not available\n3. Be conservative - don't make assumptions\n4. Identify training domains accurately\n5. Extract pain points and business context when mentioned\n6. Preserve exact phrases for important details (company names, contact info)\n7. Return valid JSON only, no additional text\n\nEdstellar Context:\n- Corporate training company serving Fortune 500 clients\n- 2,000+ courses across multiple domains\n- Global presence in 100+ locations\n- Specializes in: Technical training, Leadership, Soft skills, Compliance\n- Known for: Customization, expert trainers, post-training support"
+    },
+    "extraction_context_prompt": {
+      "role": "user",
+      "content_template": "Analyze this training enquiry and extract all available information.\n\nEnquiry Source: {source}\nEnquiry Text:\n\"\"\"\n{enquiry_text}\n\"\"\"\n\nExtract information into this exact JSON structure:\n{json_schema}\n\nRemember:\n- Use null for missing information\n- Extract exact names, emails, phone numbers\n- Identify training domain from keywords\n- Capture all pain points and challenges mentioned\n- Note urgency indicators (ASAP, urgent, immediate)\n- Preserve budget mentions exactly as stated\n- Return ONLY valid JSON, no other text"
+    }
+  },
+  "extraction_schemas": {
+    "main_extraction_schema": {
+      "contact": {
+        "name": "string or null",
+        "designation": "string or null",
+        "email": "string or null (validate email format)",
+        "phone": "string or null (any format)"
+      },
+      "company": {
+        "name": "string or null",
+        "industry": "string or null",
+        "size": "string or null",
+        "department": "string or null"
+      },
+      "training": {
+        "domain": "string or null (from predefined list)",
+        "category": "string or null (technical, soft_skills, compliance, methodology)",
+        "num_participants": "string or null (exact, range, or approximate)",
+        "skill_level": "string or null (beginner, intermediate, advanced, mixed)",
+        "pain_points": "array of strings",
+        "objectives": "array of strings",
+        "success_metrics": "array of strings"
+      },
+      "logistics": {
+        "timeline": "string or null",
+        "start_date": "string or null (any date format)",
+        "duration": "string or null",
+        "delivery_mode": "string or null (ILT, VILT, Hybrid)",
+        "location": "string or null",
+        "platform_preference": "string or null"
+      },
+      "commercial": {
+        "budget_indication": "string or null",
+        "decision_maker": "string or null",
+        "procurement_process": "string or null"
+      },
+      "technical": {
+        "sandbox_required": "boolean",
+        "specific_tools": "array of strings",
+        "infrastructure_needs": "string or null"
+      },
+      "metadata": {
+        "urgency_level": "string (immediate, planned, exploratory)",
+        "tone": "string (formal, casual, urgent)",
+        "industry_context": "string or null",
+        "confidence_score": "number 0-100",
+        "identified_needs": "array of strings",
+        "implied_context": "string or null"
+      }
+    }
+  },
+  "field_extraction_hints": {
+    "contact_name": {
+      "keywords": [
+        "I am",
+        "This is",
+        "My name is",
+        "Name:",
+        "From:",
+        "Regards,",
+        "Thanks,",
+        "Best,"
+      ],
+      "patterns": [
+        "Email signature block",
+        "Introduction line",
+        "Greeting farewell"
+      ],
+      "extraction_rules": [
+        "Extract full name if available",
+        "Include designation if mentioned together",
+        "Look in email signature area",
+        "Check 'From' field if email source"
+      ],
+      "examples": [
+        "I am Rajesh Kumar → Extract: Rajesh Kumar",
+        "From: Priya Sharma, Manager → Extract: Priya Sharma",
+        "Thanks, John Doe → Extract: John Doe"
+      ],
+      "validation": "Must be 2-100 characters"
+    },
+    "contact_email": {
+      "keywords": [
+        "@",
+        "email",
+        "reach me at",
+        "contact me at"
+      ],
+      "patterns": [
+        "user@domain.com",
+        "Email: email@company.com",
+        "From email header"
+      ],
+      "extraction_rules": [
+        "Extract email addresses matching pattern",
+        "Prefer explicitly stated emails over 'from' address",
+        "Validate format before returning"
+      ],
+      "examples": [
+        "rajesh.kumar@infosys.com → Extract as is",
+        "Email me at: priya@tcs.co.in → Extract: priya@tcs.co.in"
+      ],
+      "validation": "Must match email regex pattern"
+    },
+    "contact_phone": {
+      "keywords": [
+        "phone",
+        "mobile",
+        "call me",
+        "contact number",
+        "reach me at"
+      ],
+      "patterns": [
+        "+91 XXXXX XXXXX",
+        "(XXX) XXX-XXXX",
+        "XXX-XXX-XXXX",
+        "+X XXXXXXXXXX"
+      ],
+      "extraction_rules": [
+        "Accept any phone number format",
+        "Include country code if present",
+        "Remove extra spaces for consistency",
+        "Accept approximate formats"
+      ],
+      "examples": [
+        "+91 98765 43210",
+        "(555) 123-4567",
+        "9876543210"
+      ],
+      "validation": "10-15 digits"
+    },
+    "company_name": {
+      "keywords": [
+        "we are from",
+        "our company",
+        "working at",
+        "organization",
+        "at [Company]"
+      ],
+      "patterns": [
+        "Email domain (after @)",
+        "Explicit company mentions",
+        "Signature company name"
+      ],
+      "extraction_rules": [
+        "Extract full legal name if available",
+        "Check email domain and map to known companies",
+        "Look for company in signature block",
+        "Preserve exact spelling and capitalization"
+      ],
+      "examples": [
+        "I am from Infosys Technologies → Extract: Infosys Technologies",
+        "Email: user@tcs.com → Infer: Tata Consultancy Services",
+        "Working at Wipro Limited → Extract: Wipro Limited"
+      ],
+      "domain_matching": {
+        "enabled": true,
+        "common_mappings": {
+          "infosys.com": "Infosys Technologies",
+          "tcs.com": "Tata Consultancy Services",
+          "wipro.com": "Wipro Limited",
+          "accenture.com": "Accenture",
+          "cognizant.com": "Cognizant"
+        }
+      },
+      "validation": "2-200 characters"
+    },
+    "training_domain": {
+      "keywords_mapping": {
+        "Leadership & Management": [
+          "leadership",
+          "management",
+          "manager training",
+          "leadership development",
+          "executive coaching",
+          "people management"
+        ],
+        "Agile & Scrum": [
+          "agile",
+          "scrum",
+          "sprint",
+          "scrum master",
+          "product owner",
+          "agile transformation"
+        ],
+        "Data Science & Machine Learning": [
+          "data science",
+          "machine learning",
+          "ML",
+          "AI",
+          "artificial intelligence",
+          "python",
+          "deep learning",
+          "predictive modeling"
+        ],
+        "DevOps & Cloud": [
+          "devops",
+          "cloud",
+          "aws",
+          "azure",
+          "gcp",
+          "docker",
+          "kubernetes",
+          "ci/cd"
+        ],
+        "Cybersecurity": [
+          "cybersecurity",
+          "security",
+          "ethical hacking",
+          "penetration testing",
+          "information security"
+        ],
+        "Python Programming": [
+          "python",
+          "python programming",
+          "python development"
+        ],
+        "Excel & Data Analysis": [
+          "excel",
+          "advanced excel",
+          "data analysis",
+          "pivot tables",
+          "vlookup"
+        ],
+        "Communication Skills": [
+          "communication",
+          "presentation skills",
+          "business communication",
+          "effective communication"
+        ]
+      },
+      "extraction_rules": [
+        "Match keywords to domain list",
+        "Return most specific match",
+        "If multiple matches, prioritize exact phrase",
+        "Use 'Other' if no clear match",
+        "Consider context clues (e.g., 'Docker' → DevOps)"
+      ],
+      "multi_domain_handling": "If multiple domains mentioned, extract primary domain in 'domain' field and note others in metadata",
+      "examples": [
+        "Need Agile and Scrum training → Extract: Agile & Scrum",
+        "Want to learn Python for data science → Extract: Data Science & Machine Learning",
+        "Leadership development for managers → Extract: Leadership & Management"
+      ]
+    },
+    "num_participants": {
+      "keywords": [
+        "people",
+        "participants",
+        "team",
+        "employees",
+        "members",
+        "attendees"
+      ],
+      "patterns": [
+        "X people",
+        "team of X",
+        "X participants",
+        "about X",
+        "~X",
+        "X-Y",
+        "between X and Y"
+      ],
+      "extraction_rules": [
+        "Extract exact numbers when stated",
+        "Preserve ranges (e.g., '20-30')",
+        "Accept approximate values (e.g., '~25', 'about 30')",
+        "Look for contextual numbers after keywords"
+      ],
+      "examples": [
+        "for 30 people → Extract: 30",
+        "team of about 25 → Extract: ~25",
+        "between 20-30 participants → Extract: 20-30",
+        "around 50 employees → Extract: ~50"
+      ],
+      "validation": "Must contain numbers, 1-1000 range"
+    },
+    "business_pain_points": {
+      "keywords": [
+        "struggling with",
+        "challenges",
+        "issues",
+        "problems",
+        "difficulty",
+        "need to improve",
+        "facing",
+        "concerns"
+      ],
+      "patterns": [
+        "Negative sentiment statements",
+        "Problem descriptions",
+        "Gap statements"
+      ],
+      "extraction_rules": [
+        "Extract all mentioned problems/challenges",
+        "Return as array of distinct pain points",
+        "Keep original phrasing",
+        "Include implied pain points if clear",
+        "Separate multiple pain points into array elements"
+      ],
+      "examples": [
+        "struggling with sprint planning → Extract: ['Sprint planning challenges']",
+        "teams face issues with backlog and estimation → Extract: ['Backlog management issues', 'Estimation difficulties']"
+      ]
+    },
+    "preferred_timeline": {
+      "keywords": [
+        "by",
+        "before",
+        "in",
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "quarter",
+        "month",
+        "next",
+        "ASAP",
+        "urgent",
+        "immediate"
+      ],
+      "patterns": [
+        "Before [date/quarter]",
+        "By [month/year]",
+        "In [timeframe]",
+        "Q[1-4] [year]",
+        "Next [month/quarter]"
+      ],
+      "extraction_rules": [
+        "Extract timeline as stated",
+        "Preserve relative timeframes (e.g., 'next month')",
+        "Note urgency keywords (ASAP, urgent)",
+        "Extract specific dates if mentioned"
+      ],
+      "examples": [
+        "Before Q2 2024 → Extract: Before Q2 2024",
+        "Need ASAP → Extract: ASAP",
+        "In January → Extract: January 2024",
+        "Within 2 months → Extract: Within 2 months"
+      ],
+      "urgency_detection": {
+        "immediate": ["ASAP", "urgent", "immediate", "emergency", "within days"],
+        "planned": ["next month", "next quarter", "in [1-3] months"],
+        "exploratory": ["future", "planning", "eventually", "considering"]
+      }
+    },
+    "delivery_mode": {
+      "keywords_mapping": {
+        "ILT": [
+          "in-person",
+          "on-site",
+          "at our office",
+          "classroom",
+          "face-to-face",
+          "physical"
+        ],
+        "VILT": [
+          "virtual",
+          "online",
+          "remote",
+          "zoom",
+          "teams",
+          "webinar",
+          "video"
+        ],
+        "Hybrid": [
+          "hybrid",
+          "mix",
+          "combination",
+          "both online and offline",
+          "some in-person and some virtual"
+        ]
+      },
+      "extraction_rules": [
+        "Match keywords to mode",
+        "If both ILT and VILT keywords, choose Hybrid",
+        "Default to null if not mentioned",
+        "Consider platform mentions (Zoom → VILT)"
+      ],
+      "examples": [
+        "virtual training on Zoom → Extract: VILT",
+        "at our Bangalore office → Extract: ILT",
+        "mix of online and in-person → Extract: Hybrid"
+      ]
+    },
+    "budget_range": {
+      "keywords": [
+        "budget",
+        "cost",
+        "price",
+        "investment",
+        "spend",
+        "₹",
+        "$",
+        "lakhs",
+        "thousand"
+      ],
+      "patterns": [
+        "₹X-Y",
+        "$X-Y",
+        "X lakhs",
+        "around X",
+        "~X",
+        "approximately X"
+      ],
+      "extraction_rules": [
+        "Extract budget exactly as stated",
+        "Preserve currency symbols",
+        "Accept ranges and approximations",
+        "Note 'lakhs', 'thousands', 'million' properly"
+      ],
+      "examples": [
+        "Budget of ₹3-4 Lakhs → Extract: ₹3-4 Lakhs",
+        "around $10,000 → Extract: ~$10,000",
+        "approximately 5 lakhs → Extract: ~₹5 Lakhs"
+      ],
+      "validation": "Should contain numbers and optionally currency"
+    },
+    "decision_maker": {
+      "keywords": [
+        "decision maker",
+        "reporting to",
+        "manager",
+        "head",
+        "director",
+        "VP",
+        "CTO",
+        "CHRO",
+        "CEO",
+        "approval from",
+        "will decide"
+      ],
+      "patterns": [
+        "Name, Title",
+        "Title Name",
+        "Decision will be made by [Name]"
+      ],
+      "extraction_rules": [
+        "Extract decision maker name and title if available",
+        "Look for senior titles (VP, Director, Head, CTO, etc.)",
+        "Note if requester mentions they need approval"
+      ],
+      "examples": [
+        "Reporting to Venkat Raman, VP Engineering → Extract: Venkat Raman, VP Engineering",
+        "CHRO will decide → Extract: CHRO",
+        "Need approval from my manager → Extract: Manager (title unknown)"
+      ]
+    }
+  },
+  "secondary_analysis_prompts": {
+    "completeness_scoring_prompt": {
+      "role": "user",
+      "content_template": "Based on the extracted information below, calculate a completeness score using this exact rubric:\n\nBASIC INFORMATION (20 points):\n- Contact name: 5 points\n- Contact designation: 5 points\n- Company name: 5 points\n- Email: 3 points\n- Phone: 2 points\n\nTRAINING REQUIREMENTS (30 points):\n- Number of participants: 10 points\n- Training domain: 10 points\n- Skill levels: 5 points\n- Business objectives/pain points: 5 points\n\nDELIVERY PREFERENCES (20 points):\n- Timeline: 5 points\n- Mode (ILT/VILT/Hybrid): 10 points\n- Platform preference: 3 points\n- Technical requirements: 2 points\n\nCOMMERCIAL & DECISION-MAKING (30 points):\n- Budget range: 10 points\n- Decision maker: 10 points\n- Procurement process: 5 points\n- Success metrics: 5 points\n\nExtracted Information:\n{extracted_data}\n\nReturn JSON:\n{\n  \"basic_info_score\": 0-20,\n  \"training_req_score\": 0-30,\n  \"delivery_pref_score\": 0-20,\n  \"commercial_score\": 0-30,\n  \"total_score\": 0-100,\n  \"completeness_level\": \"INCOMPLETE\" | \"SEMI_COMPLETE\" | \"COMPLETE\",\n  \"missing_critical_fields\": [array],\n  \"priority_fields\": [{field, reason, priority}],\n  \"scoring_breakdown\": {detailed explanations}\n}\n\nCompleteness Levels:\n- INCOMPLETE: 0-30%\n- SEMI_COMPLETE: 31-60%\n- COMPLETE: 61-100%"
+    },
+    "discovery_questions_prompt": {
+      "role": "user",
+      "content_template": "You are an expert L&D consultant and sales coach at Edstellar.\n\nGenerate a smart discovery plan for this enquiry:\n\nEnquiry Context:\n{extracted_data}\n\nCompleteness: {completeness_score}%\nMissing Fields: {missing_fields}\n\nTraining Domain: {training_domain}\nIndustry: {industry}\n\nGenerate:\n\n1. PRIORITIZED DISCOVERY QUESTIONS (8-10 questions):\n   - Focus on missing critical information\n   - Be specific to training domain\n   - Order by priority\n   - Include probing follow-ups\n\n2. DISCOVERY EMAIL TEMPLATE:\n   - Professional and consultative\n   - Reference specific pain points\n   - Request missing information naturally\n   - Position Edstellar as partner\n   - Clear call-to-action\n\n3. DISCOVERY CALL SCRIPT:\n   - Opening\n   - Key questions\n   - Probing questions\n   - Closing next steps\n\n4. PAIN POINT ANALYSIS:\n   - Likely challenges for this domain/industry\n   - How Edstellar addresses them\n   - Positioning talking points\n\n5. RISK & OPPORTUNITY ASSESSMENT:\n   - Risk factors to watch\n   - Opportunity indicators\n   - Competitive considerations\n\n6. NEXT STEPS:\n   - Immediate actions (24h)\n   - Short-term actions (1 week)\n\nReturn as structured JSON."
+    },
+    "industry_inference_prompt": {
+      "role": "user",
+      "content_template": "Based on the company name '{company_name}' and any contextual information in the enquiry, infer:\n\n1. Industry sector (Technology, BFSI, Manufacturing, Healthcare, Retail, Consulting, Other)\n2. Company size estimate (if not explicitly stated)\n3. Likely use cases for {training_domain} training in this industry\n4. Common pain points for this industry\n\nReturn JSON:\n{\n  \"inferred_industry\": \"string\",\n  \"confidence\": 0-100,\n  \"company_size_estimate\": \"string or null\",\n  \"typical_use_cases\": [array],\n  \"industry_pain_points\": [array]\n}"
+    }
+  },
+  "confidence_scoring": {
+    "description": "AI should provide confidence scores for extractions",
+    "confidence_levels": {
+      "high": {
+        "range": "80-100",
+        "criteria": "Explicitly stated in enquiry, no ambiguity"
+      },
+      "medium": {
+        "range": "50-79",
+        "criteria": "Strongly implied or inferred from context"
+      },
+      "low": {
+        "range": "0-49",
+        "criteria": "Weak inference, high uncertainty"
+      }
+    },
+    "use_confidence_for": [
+      "Highlighting fields that need verification",
+      "Prioritizing follow-up questions",
+      "Showing user which fields to review"
+    ]
+  },
+  "error_handling": {
+    "no_relevant_info": {
+      "response": "Unable to extract meaningful information from enquiry. Enquiry text may be too brief or unrelated to training.",
+      "suggested_action": "Request user to provide more details or verify enquiry text"
+    },
+    "ambiguous_domain": {
+      "response": "Training domain unclear. Multiple possibilities detected: {domains}",
+      "suggested_action": "Present options to user for manual selection"
+    },
+    "json_parse_error": {
+      "response": "AI returned invalid JSON",
+      "fallback": "Retry with clearer instructions",
+      "max_retries": 2
+    },
+    "timeout_error": {
+      "response": "AI request timed out",
+      "fallback": "Use cached extraction or manual entry",
+      "retry": true
+    }
+  },
+  "post_processing_rules": {
+    "field_normalization": [
+      {
+        "field": "contact_email",
+        "rule": "Convert to lowercase",
+        "trim": true
+      },
+      {
+        "field": "company_name",
+        "rule": "Capitalize properly",
+        "trim": true
+      },
+      {
+        "field": "num_participants",
+        "rule": "Extract numbers only if contains text",
+        "preserve_ranges": true
+      },
+      {
+        "field": "phone",
+        "rule": "Remove spaces, keep format",
+        "preserve_country_code": true
+      }
+    ],
+    "field_enrichment": [
+      {
+        "field": "company_name",
+        "enrich_with": "company_database_lookup",
+        "add_fields": ["industry", "size", "location"]
+      },
+      {
+        "field": "contact_email",
+        "enrich_with": "email_domain_analysis",
+        "verify_company_match": true
+      }
+    ]
+  },
+  "special_handling": {
+    "multi_language_support": {
+      "enabled": false,
+      "supported_languages": ["English"],
+      "translation_before_extraction": false,
+      "note": "Future enhancement"
+    },
+    "forwarded_emails": {
+      "detect_forwarding": true,
+      "extract_from": "original_message",
+      "ignore_forward_headers": true
+    },
+    "signature_block_handling": {
+      "identify_signature": true,
+      "extract_from_signature": [
+        "name",
+        "designation",
+        "company",
+        "phone",
+        "email"
+      ],
+      "common_signature_patterns": [
+        "Regards,",
+        "Thanks,",
+        "Best regards,",
+        "Sincerely,"
+      ]
+    }
+  },
+  "metadata": {
+    "total_fields_extractable": 35,
+    "critical_fields": 8,
+    "average_extraction_time_ms": 2500,
+    "extraction_accuracy": "~85% for explicit information"
+  }
+}

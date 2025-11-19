@@ -1,0 +1,497 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "Requirements and conditions for unlocking proposal builder",
+  "global_settings": {
+    "minimum_completeness_percentage": 60,
+    "enable_soft_unlock": false,
+    "soft_unlock_percentage": 55,
+    "soft_unlock_warning": "You're close but missing some critical information. Proceeding may result in an incomplete proposal.",
+    "celebration_on_unlock": true,
+    "celebration_message": "🎉 Congratulations! You've gathered enough information to create a professional proposal.",
+    "auto_notify_on_unlock": true
+  },
+  "mandatory_fields": {
+    "universal_requirements": [
+      {
+        "field_name": "contact_name",
+        "display_name": "Contact Name",
+        "reason": "Required to personalize proposal",
+        "category": "contact_information",
+        "alternative_fields": [],
+        "can_skip": false
+      },
+      {
+        "field_name": "contact_email",
+        "display_name": "Contact Email",
+        "reason": "Required to send proposal",
+        "category": "contact_information",
+        "alternative_fields": [],
+        "can_skip": false
+      },
+      {
+        "field_name": "company_name",
+        "display_name": "Company Name",
+        "reason": "Required for proposal header and context",
+        "category": "contact_information",
+        "alternative_fields": [],
+        "can_skip": false
+      },
+      {
+        "field_name": "training_domain",
+        "display_name": "Training Topic",
+        "reason": "Foundation for curriculum design",
+        "category": "training_requirements",
+        "alternative_fields": [],
+        "can_skip": false
+      },
+      {
+        "field_name": "num_participants",
+        "display_name": "Number of Participants",
+        "reason": "Critical for logistics and pricing",
+        "category": "training_requirements",
+        "alternative_fields": [],
+        "can_skip": false
+      },
+      {
+        "field_name": "delivery_mode",
+        "display_name": "Training Delivery Mode",
+        "reason": "Determines logistics approach and pricing",
+        "category": "logistics_delivery",
+        "alternative_fields": [],
+        "can_skip": false
+      },
+      {
+        "field_name": "preferred_timeline",
+        "display_name": "Preferred Timeline",
+        "reason": "Required for scheduling and planning",
+        "category": "logistics_delivery",
+        "alternative_fields": ["start_date"],
+        "can_skip": false
+      },
+      {
+        "field_name": "decision_maker_name",
+        "display_name": "Decision Maker",
+        "reason": "Proposal must be addressed to the right person",
+        "category": "commercial_budget",
+        "alternative_fields": [],
+        "can_skip": false
+      }
+    ],
+    "conditional_requirements": [
+      {
+        "requirement_id": "COND_REQ_001",
+        "name": "VILT Platform Requirements",
+        "condition": {
+          "field": "delivery_mode",
+          "operator": "IN",
+          "values": ["VILT", "Hybrid"]
+        },
+        "additional_mandatory_fields": [
+          {
+            "field_name": "participant_timezone",
+            "display_name": "Participant Time Zone",
+            "reason": "Required to schedule virtual sessions appropriately"
+          },
+          {
+            "field_name": "platform_preference",
+            "display_name": "Virtual Platform",
+            "reason": "Required to set up virtual training infrastructure"
+          }
+        ],
+        "skip_allowed": false
+      },
+      {
+        "requirement_id": "COND_REQ_002",
+        "name": "ILT Location Requirements",
+        "condition": {
+          "field": "delivery_mode",
+          "operator": "EQUALS",
+          "value": "ILT"
+        },
+        "additional_mandatory_fields": [
+          {
+            "field_name": "training_location",
+            "display_name": "Training Location",
+            "reason": "Required for venue planning and trainer travel"
+          }
+        ],
+        "skip_allowed": false
+      },
+      {
+        "requirement_id": "COND_REQ_003",
+        "name": "Technical Training Infrastructure",
+        "condition": {
+          "field": "training_category",
+          "operator": "EQUALS",
+          "value": "technical"
+        },
+        "additional_mandatory_fields": [
+          {
+            "field_name": "sandbox_required",
+            "display_name": "Sandbox/Lab Environment",
+            "reason": "Required to plan technical infrastructure"
+          }
+        ],
+        "skip_allowed": true,
+        "skip_warning": "Not specifying technical requirements may result in setup delays"
+      },
+      {
+        "requirement_id": "COND_REQ_004",
+        "name": "Large Group Special Requirements",
+        "condition": {
+          "field": "num_participants",
+          "operator": "GREATER_THAN",
+          "value": 50
+        },
+        "additional_mandatory_fields": [],
+        "warnings": [
+          {
+            "warning_id": "WARN_LARGE_GROUP",
+            "message": "⚠️ Large group detected (50+ participants). Consider:",
+            "suggestions": [
+              "Splitting into multiple batches for better outcomes",
+              "Assigning multiple trainers",
+              "Extended duration for hands-on practice",
+              "Larger venue or multiple breakout rooms"
+            ]
+          }
+        ],
+        "skip_allowed": true
+      }
+    ]
+  },
+  "recommended_fields": {
+    "description": "Fields that significantly improve proposal quality but are not mandatory",
+    "high_priority_recommendations": [
+      {
+        "field_name": "budget_range",
+        "display_name": "Budget Range",
+        "reason": "Helps align proposal with client's investment capacity",
+        "impact_on_proposal": "Allows pricing optimization and solution sizing",
+        "weight": 10
+      },
+      {
+        "field_name": "business_pain_points",
+        "display_name": "Business Challenges",
+        "reason": "Enables targeted solution design",
+        "impact_on_proposal": "Creates compelling business case and ROI justification",
+        "weight": 8
+      },
+      {
+        "field_name": "participant_skill_level",
+        "display_name": "Participant Skill Level",
+        "reason": "Ensures appropriate curriculum depth",
+        "impact_on_proposal": "Better training outcomes through right-level content",
+        "weight": 7
+      },
+      {
+        "field_name": "success_metrics",
+        "display_name": "Success Metrics",
+        "reason": "Aligns training with measurable outcomes",
+        "impact_on_proposal": "Demonstrates commitment to results",
+        "weight": 7
+      },
+      {
+        "field_name": "contact_phone",
+        "display_name": "Contact Phone",
+        "reason": "Enables direct communication",
+        "impact_on_proposal": "Faster follow-up and clarifications",
+        "weight": 5
+      }
+    ],
+    "medium_priority_recommendations": [
+      {
+        "field_name": "learning_objectives",
+        "display_name": "Learning Objectives",
+        "reason": "Clarifies expected outcomes",
+        "weight": 5
+      },
+      {
+        "field_name": "prior_training_experience",
+        "display_name": "Prior Training Experience",
+        "reason": "Helps avoid repeating past mistakes",
+        "weight": 4
+      },
+      {
+        "field_name": "procurement_process",
+        "display_name": "Procurement Process",
+        "reason": "Streamlines approval workflow",
+        "weight": 3
+      }
+    ],
+    "recommendation_threshold": {
+      "excellent_quality": 85,
+      "good_quality": 75,
+      "acceptable_quality": 60
+    },
+    "ui_messages": {
+      "excellent": "✨ Excellent! Your proposal will be comprehensive and highly tailored.",
+      "good": "👍 Good! You have strong information for a quality proposal.",
+      "acceptable": "✅ Acceptable. You can generate a proposal, but adding more details would improve it.",
+      "below_acceptable": "⚠️ You're below the recommendation threshold. Consider adding: {missing_fields}"
+    }
+  },
+  "validation_rules": {
+    "pre_unlock_checks": [
+      {
+        "check_id": "CHECK_001",
+        "name": "Completeness Threshold",
+        "validation_type": "score_check",
+        "condition": {
+          "field": "completeness_score",
+          "operator": "GREATER_THAN_OR_EQUAL",
+          "value": 60
+        },
+        "error_message": "Completeness score must be at least 60%. Current: {current_score}%",
+        "blocking": true
+      },
+      {
+        "check_id": "CHECK_002",
+        "name": "All Mandatory Fields Present",
+        "validation_type": "field_presence",
+        "condition": "all_mandatory_fields_filled",
+        "error_message": "Missing required fields: {missing_fields}",
+        "blocking": true
+      },
+      {
+        "check_id": "CHECK_003",
+        "name": "Email Format Valid",
+        "validation_type": "format_validation",
+        "field": "contact_email",
+        "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        "error_message": "Please provide a valid email address",
+        "blocking": true
+      },
+      {
+        "check_id": "CHECK_004",
+        "name": "Participants Count Reasonable",
+        "validation_type": "range_check",
+        "field": "num_participants",
+        "min_value": 1,
+        "max_value": 1000,
+        "error_message": "Number of participants must be between 1 and 1000",
+        "blocking": true
+      },
+      {
+        "check_id": "CHECK_005",
+        "name": "Timeline Not In Past",
+        "validation_type": "date_check",
+        "field": "start_date",
+        "condition": "date_in_future",
+        "error_message": "Start date cannot be in the past",
+        "blocking": false,
+        "warning_message": "⚠️ The specified start date has passed. Please update."
+      },
+      {
+        "check_id": "CHECK_006",
+        "name": "Budget vs Participants Sanity Check",
+        "validation_type": "business_logic",
+        "condition": "budget_reasonable_for_participants",
+        "error_message": null,
+        "blocking": false,
+        "warning_message": "💡 Budget seems low for {num_participants} participants. Typical range: {suggested_range}. Consider discussing with client."
+      }
+    ],
+    "post_unlock_validations": [
+      {
+        "validation_id": "POST_001",
+        "name": "Decision Maker Contact Verification",
+        "description": "Verify decision maker is the same as contact or different person",
+        "action": "prompt_user",
+        "message": "Is {decision_maker_name} the same person as {contact_name}?",
+        "options": ["Yes, same person", "No, different person"],
+        "blocking": false
+      }
+    ]
+  },
+  "unlock_triggers": {
+    "automatic_triggers": [
+      {
+        "trigger_id": "AUTO_UNLOCK_001",
+        "name": "Threshold Crossed",
+        "condition": {
+          "completeness_score": ">=60",
+          "all_mandatory_fields": "filled"
+        },
+        "actions": [
+          {
+            "action": "enable_proposal_button",
+            "parameters": {}
+          },
+          {
+            "action": "show_celebration_modal",
+            "parameters": {
+              "message": "🎉 Proposal Builder Unlocked!",
+              "sub_message": "You've gathered enough information to create a professional proposal.",
+              "show_confetti": true,
+              "duration_seconds": 5
+            }
+          },
+          {
+            "action": "send_notification",
+            "parameters": {
+              "type": "success",
+              "message": "Enquiry {enquiry_id} is ready for proposal generation!",
+              "channels": ["in_app", "email"]
+            }
+          },
+          {
+            "action": "log_activity",
+            "parameters": {
+              "activity_type": "milestone_completed",
+              "description": "Milestone 3 unlocked: Proposal preparation ready"
+            }
+          },
+          {
+            "action": "update_enquiry_status",
+            "parameters": {
+              "new_status": "proposal_ready"
+            }
+          }
+        ]
+      }
+    ],
+    "manual_override": {
+      "enabled": true,
+      "allowed_roles": ["admin", "sales_manager"],
+      "requires_justification": true,
+      "justification_prompt": "Why are you unlocking proposal builder below the threshold?",
+      "log_override": true,
+      "override_warning": "⚠️ Proceeding below 60% completeness may result in low-quality proposals."
+    }
+  },
+  "ui_components": {
+    "progress_indicators": {
+      "show_progress_bar": true,
+      "show_percentage": true,
+      "show_remaining_count": true,
+      "remaining_message_template": "Answer {count} more {questions/question} to unlock proposal builder",
+      "color_coding": {
+        "0-30": "#EF4444",
+        "31-60": "#F59E0B",
+        "61-100": "#10B981"
+      }
+    },
+    "missing_fields_display": {
+      "show_missing_critical": true,
+      "show_missing_recommended": true,
+      "group_by_category": true,
+      "clickable_to_field": true,
+      "style": "expandable_card"
+    },
+    "unlock_button": {
+      "default_state": "disabled",
+      "default_text": "🔒 Complete Required Fields to Unlock",
+      "enabled_text": "Generate Proposal →",
+      "loading_text": "Preparing Proposal...",
+      "icon_change_on_enable": true,
+      "show_tooltip_when_disabled": true,
+      "tooltip_text": "Complete {missing_count} required fields to unlock"
+    }
+  },
+  "proposal_quality_indicators": {
+    "enabled": true,
+    "display_on_unlock": true,
+    "quality_levels": [
+      {
+        "level": "Basic",
+        "min_score": 60,
+        "max_score": 69,
+        "color": "#F59E0B",
+        "icon": "📄",
+        "message": "You can generate a basic proposal. Adding more details will improve quality.",
+        "missing_for_next_level": "Add budget and pain points for better quality"
+      },
+      {
+        "level": "Good",
+        "min_score": 70,
+        "max_score": 79,
+        "color": "#10B981",
+        "icon": "📋",
+        "message": "Good information quality. Your proposal will be solid.",
+        "missing_for_next_level": "Add success metrics and skill levels for excellent quality"
+      },
+      {
+        "level": "Excellent",
+        "min_score": 80,
+        "max_score": 100,
+        "color": "#8B5CF6",
+        "icon": "⭐",
+        "message": "Excellent! Your proposal will be comprehensive and highly tailored.",
+        "missing_for_next_level": null
+      }
+    ]
+  },
+  "special_cases": {
+    "repeat_client_fast_track": {
+      "enabled": true,
+      "condition": "company_in_past_clients",
+      "reduced_threshold": 50,
+      "auto_populate_fields": [
+        "procurement_process",
+        "decision_maker_name",
+        "platform_preference"
+      ],
+      "message": "✅ Repeat client! Some details pre-filled. Lower threshold applied (50%)."
+    },
+    "urgent_enquiry_relaxed_rules": {
+      "enabled": true,
+      "condition": "urgency_level == 'immediate'",
+      "allow_soft_unlock": true,
+      "soft_unlock_at": 55,
+      "message": "🔥 Urgent enquiry - you can proceed at 55% with a warning."
+    },
+    "enterprise_client_stricter_rules": {
+      "enabled": true,
+      "condition": "company_size == '10000+' OR fortune_500 == true",
+      "increased_threshold": 70,
+      "additional_mandatory_fields": [
+        "decision_maker_name",
+        "budget_range",
+        "success_metrics"
+      ],
+      "message": "⭐ Enterprise client - higher quality threshold (70%) for premium proposals."
+    }
+  },
+  "error_messages": {
+    "below_threshold": {
+      "title": "Not Ready Yet",
+      "message": "You need {percentage_needed}% completeness to generate a proposal. Currently at {current_percentage}%.",
+      "action_button": "Continue Discovery",
+      "show_missing_fields": true
+    },
+    "missing_mandatory": {
+      "title": "Missing Required Information",
+      "message": "Please complete these required fields before generating a proposal:",
+      "list_missing_fields": true,
+      "action_button": "Fill Required Fields"
+    },
+    "validation_failed": {
+      "title": "Validation Error",
+      "message": "Please fix the following issues:",
+      "list_validation_errors": true,
+      "action_button": "Fix Issues"
+    }
+  },
+  "success_messages": {
+    "unlock_achieved": {
+      "title": "🎉 Proposal Ready!",
+      "message": "You've gathered enough information to create a professional proposal for {company_name}.",
+      "show_summary": true,
+      "summary_sections": [
+        "What's included in your proposal",
+        "Missing optional fields (to improve quality)"
+      ],
+      "primary_action": "Generate Proposal Now",
+      "secondary_action": "Add More Details"
+    }
+  },
+  "metadata": {
+    "total_validation_rules": 6,
+    "total_conditional_requirements": 4,
+    "default_threshold": 60,
+    "soft_unlock_enabled": false,
+    "manual_override_enabled": true
+  }
+}

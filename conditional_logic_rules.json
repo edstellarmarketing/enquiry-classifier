@@ -1,0 +1,668 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "Conditional logic rules for dynamic question flow",
+  "rules": [
+    {
+      "rule_id": "R001",
+      "rule_name": "Technical Training Questions",
+      "priority": "high",
+      "enabled": true,
+      "description": "Show technical requirement questions for technical training domains",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Data Science & Machine Learning"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "DevOps & Cloud"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Cybersecurity"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Python Programming"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Java Programming"
+          },
+          {
+            "field": "training_category",
+            "operator": "EQUALS",
+            "value": "technical"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "SHOW_QUESTIONS",
+          "question_ids": [
+            "Q045",
+            "Q046",
+            "Q047",
+            "Q048",
+            "Q049",
+            "Q050"
+          ]
+        },
+        {
+          "action_type": "REQUIRE_FIELD",
+          "field_name": "sandbox_required"
+        },
+        {
+          "action_type": "ADD_POINTS",
+          "category": "technical_requirements",
+          "points": 2,
+          "condition": "technical_requirements IS_NOT_EMPTY"
+        },
+        {
+          "action_type": "DISPLAY_TIP",
+          "message": "💡 Tip: Document technical prerequisites for best training outcomes"
+        }
+      ],
+      "metadata": {
+        "affects_questions_count": 6,
+        "applies_to_domains": [
+          "Data Science & Machine Learning",
+          "DevOps & Cloud",
+          "Cybersecurity",
+          "Python Programming",
+          "Java Programming"
+        ]
+      }
+    },
+    {
+      "rule_id": "R002",
+      "rule_name": "VILT Platform Questions",
+      "priority": "high",
+      "enabled": true,
+      "description": "Show virtual platform questions when VILT or Hybrid selected",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "delivery_mode",
+            "operator": "EQUALS",
+            "value": "VILT"
+          },
+          {
+            "field": "delivery_mode",
+            "operator": "EQUALS",
+            "value": "Hybrid"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "SHOW_QUESTIONS",
+          "question_ids": [
+            "Q019",
+            "Q020",
+            "Q021"
+          ]
+        },
+        {
+          "action_type": "HIDE_QUESTIONS",
+          "question_ids": [
+            "Q017",
+            "Q018"
+          ],
+          "hide_if_delivery_mode_is": "VILT"
+        },
+        {
+          "action_type": "REQUIRE_FIELD",
+          "field_name": "participant_timezone"
+        },
+        {
+          "action_type": "ADJUST_POINTS",
+          "category": "delivery_preferences",
+          "points_delta": 3
+        },
+        {
+          "action_type": "DISPLAY_TIP",
+          "message": "💡 For large virtual groups (50+), consider breakout room needs",
+          "show_if": "num_participants > 50"
+        }
+      ],
+      "metadata": {
+        "affects_questions_count": 3,
+        "impacts_pricing": true
+      }
+    },
+    {
+      "rule_id": "R003",
+      "rule_name": "ILT Venue Questions",
+      "priority": "high",
+      "enabled": true,
+      "description": "Show venue-related questions for in-person training",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "delivery_mode",
+            "operator": "EQUALS",
+            "value": "ILT"
+          },
+          {
+            "field": "delivery_mode",
+            "operator": "EQUALS",
+            "value": "Hybrid"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "SHOW_QUESTIONS",
+          "question_ids": [
+            "Q017",
+            "Q018"
+          ]
+        },
+        {
+          "action_type": "HIDE_QUESTIONS",
+          "question_ids": [
+            "Q019",
+            "Q020",
+            "Q021"
+          ],
+          "hide_if_delivery_mode_is": "ILT"
+        },
+        {
+          "action_type": "REQUIRE_FIELD",
+          "field_name": "training_location"
+        },
+        {
+          "action_type": "DISPLAY_TIP",
+          "message": "💡 Ensure venue has adequate seating, projector, and internet"
+        }
+      ],
+      "metadata": {
+        "affects_questions_count": 2,
+        "impacts_pricing": true
+      }
+    },
+    {
+      "rule_id": "R004",
+      "rule_name": "Large Group Warning",
+      "priority": "medium",
+      "enabled": true,
+      "description": "Show warnings and suggestions for large participant groups",
+      "conditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "field": "num_participants",
+            "operator": "GREATER_THAN",
+            "value": 50
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "DISPLAY_WARNING",
+          "message": "⚠️ Large group detected (50+ participants). Consider batch training for better outcomes.",
+          "severity": "info"
+        },
+        {
+          "action_type": "SHOW_QUESTIONS",
+          "question_ids": [
+            "Q060"
+          ],
+          "question_text": "Would you prefer to split into multiple batches?"
+        },
+        {
+          "action_type": "SUGGEST_TO_SALES",
+          "message": "Discuss batch training approach and volume pricing"
+        }
+      ],
+      "metadata": {
+        "affects_pricing": true,
+        "requires_special_planning": true
+      }
+    },
+    {
+      "rule_id": "R005",
+      "rule_name": "Budget Missing - High Priority",
+      "priority": "high",
+      "enabled": true,
+      "description": "Prompt for budget if completeness >40% but budget still empty",
+      "conditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "field": "completeness_score",
+            "operator": "GREATER_THAN",
+            "value": 40
+          },
+          {
+            "field": "budget_range",
+            "operator": "IS_EMPTY",
+            "value": null
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "PRIORITIZE_QUESTION",
+          "question_id": "Q022",
+          "priority_level": 1
+        },
+        {
+          "action_type": "DISPLAY_TIP",
+          "message": "💡 Budget information helps us propose solutions that fit your investment capacity. You can provide a range or approximate amount."
+        },
+        {
+          "action_type": "SUGGEST_TO_SALES",
+          "message": "Budget discussion needed - use pricing guidance to help client"
+        }
+      ],
+      "metadata": {
+        "critical_for_proposal": true
+      }
+    },
+    {
+      "rule_id": "R006",
+      "rule_name": "Decision Maker Missing - Critical",
+      "priority": "critical",
+      "enabled": true,
+      "description": "Flag missing decision maker when approaching proposal threshold",
+      "conditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "field": "completeness_score",
+            "operator": "GREATER_THAN",
+            "value": 50
+          },
+          {
+            "field": "decision_maker_name",
+            "operator": "IS_EMPTY",
+            "value": null
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "PRIORITIZE_QUESTION",
+          "question_id": "Q023",
+          "priority_level": 1
+        },
+        {
+          "action_type": "DISPLAY_WARNING",
+          "message": "⚠️ Decision maker information is critical for proposal submission",
+          "severity": "high"
+        },
+        {
+          "action_type": "BLOCK_PROPOSAL",
+          "until_field_filled": "decision_maker_name",
+          "message": "Please identify the decision maker before generating proposal"
+        }
+      ],
+      "metadata": {
+        "blocks_proposal": true
+      }
+    },
+    {
+      "rule_id": "R007",
+      "rule_name": "Urgent Timeline - Fast Track",
+      "priority": "high",
+      "enabled": true,
+      "description": "Flag enquiries with urgent timelines for priority handling",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "preferred_timeline",
+            "operator": "CONTAINS",
+            "value": "ASAP"
+          },
+          {
+            "field": "preferred_timeline",
+            "operator": "CONTAINS",
+            "value": "urgent"
+          },
+          {
+            "field": "preferred_timeline",
+            "operator": "CONTAINS",
+            "value": "immediate"
+          },
+          {
+            "field": "urgency_level",
+            "operator": "EQUALS",
+            "value": "immediate"
+          },
+          {
+            "field": "start_date",
+            "operator": "WITHIN_DAYS",
+            "value": 14
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "SET_PRIORITY",
+          "priority": "high",
+          "flag": "🔥 URGENT"
+        },
+        {
+          "action_type": "NOTIFY_USER",
+          "message": "🔥 Urgent enquiry - timeline is tight. Prioritize completing discovery.",
+          "notification_type": "alert"
+        },
+        {
+          "action_type": "CREATE_REMINDER",
+          "reminder_title": "Urgent enquiry follow-up",
+          "due_in_hours": 24
+        },
+        {
+          "action_type": "SUGGEST_TO_SALES",
+          "message": "Fast-track this enquiry. Check trainer availability for urgent dates."
+        }
+      ],
+      "metadata": {
+        "affects_sla": true,
+        "requires_immediate_action": true
+      }
+    },
+    {
+      "rule_id": "R008",
+      "rule_name": "Non-Technical Training - Hide Tech Questions",
+      "priority": "medium",
+      "enabled": true,
+      "description": "Hide all technical questions for soft skills/non-technical training",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Leadership & Management"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Communication Skills"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Soft Skills Development"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Sales & Negotiation"
+          },
+          {
+            "field": "training_domain",
+            "operator": "EQUALS",
+            "value": "Customer Service Excellence"
+          },
+          {
+            "field": "training_category",
+            "operator": "EQUALS",
+            "value": "soft_skills"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "HIDE_QUESTIONS",
+          "question_ids": [
+            "Q045",
+            "Q046",
+            "Q047",
+            "Q048",
+            "Q049",
+            "Q050"
+          ]
+        },
+        {
+          "action_type": "REMOVE_REQUIREMENT",
+          "field_name": "sandbox_required"
+        },
+        {
+          "action_type": "ADJUST_CATEGORY_WEIGHT",
+          "category": "technical_requirements",
+          "new_weight": 0
+        }
+      ],
+      "metadata": {
+        "simplifies_questionnaire": true
+      }
+    },
+    {
+      "rule_id": "R009",
+      "rule_name": "Budget vs Participants Mismatch",
+      "priority": "medium",
+      "enabled": true,
+      "description": "Warn if budget seems insufficient for participant count",
+      "conditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "field": "budget_range",
+            "operator": "IS_NOT_EMPTY",
+            "value": null
+          },
+          {
+            "field": "num_participants",
+            "operator": "IS_NOT_EMPTY",
+            "value": null
+          },
+          {
+            "custom_logic": "budget_per_participant < minimum_threshold"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "DISPLAY_WARNING",
+          "message": "⚠️ Budget may be insufficient for {num_participants} participants. Typical range: {suggested_range}",
+          "severity": "medium"
+        },
+        {
+          "action_type": "SUGGEST_TO_SALES",
+          "message": "Budget discussion needed - client expectations may need adjustment"
+        },
+        {
+          "action_type": "PROVIDE_GUIDANCE",
+          "message": "Consider discussing: batch approach, shorter program, or virtual delivery to optimize budget"
+        }
+      ],
+      "metadata": {
+        "affects_proposal_viability": true
+      }
+    },
+    {
+      "rule_id": "R010",
+      "rule_name": "Competitor Mention Detected",
+      "priority": "high",
+      "enabled": true,
+      "description": "Flag when competitor names are mentioned in enquiry",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "raw_enquiry_text",
+            "operator": "CONTAINS_ANY",
+            "values": [
+              "competitor1",
+              "competitor2",
+              "comparing vendors",
+              "other providers"
+            ]
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "SET_FLAG",
+          "flag": "⚔️ COMPETITIVE",
+          "color": "orange"
+        },
+        {
+          "action_type": "NOTIFY_USER",
+          "message": "⚔️ Competitive scenario detected. Emphasize Edstellar differentiators.",
+          "notification_type": "info"
+        },
+        {
+          "action_type": "SUGGEST_TO_SALES",
+          "message": "Prepare competitive positioning. Highlight: trainer expertise, customization, post-training support"
+        },
+        {
+          "action_type": "SHOW_QUESTIONS",
+          "question_ids": [
+            "Q070"
+          ],
+          "question_text": "What factors are most important in your vendor selection?"
+        }
+      ],
+      "metadata": {
+        "requires_strategic_approach": true
+      }
+    },
+    {
+      "rule_id": "R011",
+      "rule_name": "Fortune 500 Company - Premium Approach",
+      "priority": "high",
+      "enabled": true,
+      "description": "Flag Fortune 500 companies for premium handling",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "company_name",
+            "operator": "IN_LIST",
+            "value": "fortune_500_list"
+          },
+          {
+            "field": "company_size",
+            "operator": "EQUALS",
+            "value": "10000+ employees"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "SET_FLAG",
+          "flag": "⭐ ENTERPRISE",
+          "color": "gold"
+        },
+        {
+          "action_type": "SET_PRIORITY",
+          "priority": "high"
+        },
+        {
+          "action_type": "NOTIFY_MANAGER",
+          "message": "Enterprise client enquiry: {company_name}. Consider senior trainer assignment."
+        },
+        {
+          "action_type": "SUGGEST_TO_SALES",
+          "message": "Premium client - consider: dedicated account manager, custom curriculum, post-training support package"
+        },
+        {
+          "action_type": "SHOW_QUESTIONS",
+          "question_ids": [
+            "Q075",
+            "Q076"
+          ],
+          "section": "Enterprise Requirements"
+        }
+      ],
+      "metadata": {
+        "requires_vip_handling": true,
+        "escalate_to_senior_sales": true
+      }
+    },
+    {
+      "rule_id": "R012",
+      "rule_name": "Repeat Client - Fast Track",
+      "priority": "high",
+      "enabled": true,
+      "description": "Recognize and fast-track repeat/existing clients",
+      "conditions": {
+        "operator": "OR",
+        "conditions": [
+          {
+            "field": "company_name",
+            "operator": "EXISTS_IN",
+            "value": "past_clients_database"
+          },
+          {
+            "field": "contact_email_domain",
+            "operator": "EXISTS_IN",
+            "value": "past_clients_domains"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_type": "SET_FLAG",
+          "flag": "🔄 REPEAT CLIENT",
+          "color": "blue"
+        },
+        {
+          "action_type": "AUTO_POPULATE",
+          "fields": [
+            "procurement_process",
+            "platform_preference",
+            "decision_maker_name"
+          ],
+          "source": "previous_enquiries"
+        },
+        {
+          "action_type": "DISPLAY_INFO",
+          "message": "✅ Repeat client! Some details pre-filled from previous interactions."
+        },
+        {
+          "action_type": "SUGGEST_TO_SALES",
+          "message": "Repeat client - reference past successful programs. Last training: {last_training_date}"
+        },
+        {
+          "action_type": "SHOW_QUESTIONS",
+          "question_ids": [
+            "Q080"
+          ],
+          "question_text": "How did your previous training with us go? Any improvements for this time?"
+        }
+      ],
+      "metadata": {
+        "leverage_past_relationship": true,
+        "higher_conversion_probability": true
+      }
+    }
+  ],
+  "rule_evaluation_order": [
+    "R001",
+    "R008",
+    "R002",
+    "R003",
+    "R011",
+    "R012",
+    "R007",
+    "R006",
+    "R005",
+    "R010",
+    "R004",
+    "R009"
+  ],
+  "metadata": {
+    "total_rules": 12,
+    "critical_rules": 2,
+    "high_priority_rules": 7,
+    "medium_priority_rules": 3,
+    "rules_affecting_proposal": 3
+  }
+}

@@ -1,0 +1,1390 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "AI-powered training domain identification and classification logic for SalesIQ",
+  "ai_identification_config": {
+    "model_settings": {
+      "primary_model": "gpt-4",
+      "fallback_model": "gpt-3.5-turbo",
+      "temperature": 0.2,
+      "max_tokens": 1500,
+      "timeout_seconds": 25
+    },
+    "identification_strategy": {
+      "method": "hybrid_ai_rules",
+      "description": "Combines AI semantic understanding with rule-based keyword matching",
+      "confidence_calculation": {
+        "keyword_matching_weight": 0.35,
+        "semantic_analysis_weight": 0.40,
+        "industry_context_weight": 0.15,
+        "pain_point_matching_weight": 0.10
+      },
+      "thresholds": {
+        "high_confidence": 0.80,
+        "medium_confidence": 0.60,
+        "low_confidence": 0.40,
+        "require_manual_review_below": 0.40
+      }
+    }
+  },
+  "system_prompt": {
+    "role": "system",
+    "content": "You are an expert training consultant for Edstellar, specializing in identifying training needs from corporate enquiries.\n\nYour task: Analyze enquiry text and identify the most appropriate training domain(s) from Edstellar's catalog.\n\nContext about Edstellar:\n- Global corporate training provider with 14 years experience\n- 2,000+ courses across Technical, Leadership, Soft Skills, and Compliance domains\n- Serves Fortune 500 clients across multiple industries\n- Specializes in customized, practical training\n\nAnalysis Approach:\n1. Read the enquiry carefully for explicit training mentions\n2. Identify implicit training needs from pain points\n3. Consider industry context and typical training requirements\n4. Match to predefined domain list\n5. Provide confidence score and reasoning\n6. Suggest secondary/related domains if applicable\n\nBe conservative - only high confidence matches. When uncertain, flag for human review."
+  },
+  "domain_identification_prompt": {
+    "role": "user",
+    "content_template": "Analyze this training enquiry and identify the training domain(s).\n\nEnquiry Details:\n- Source: {source}\n- Company: {company_name}\n- Industry: {industry}\n- Contact: {contact_name}\n\nEnquiry Text:\n\"\"\"\n{enquiry_text}\n\"\"\"\n\nPain Points Extracted:\n{pain_points}\n\nAvailable Training Domains:\n{domain_list_with_descriptions}\n\nProvide analysis in this JSON format:\n{\n  \"primary_domain\": {\n    \"domain_id\": \"DOM00X\",\n    \"domain_name\": \"string\",\n    \"confidence_score\": 0.0-1.0,\n    \"reasoning\": \"Explain why this domain was selected\",\n    \"matching_keywords\": [\"array of keywords found\"],\n    \"matching_pain_points\": [\"array of pain points that match this domain\"]\n  },\n  \"secondary_domains\": [\n    {\n      \"domain_id\": \"DOM00X\",\n      \"domain_name\": \"string\",\n      \"confidence_score\": 0.0-1.0,\n      \"reasoning\": \"Why this might also be relevant\"\n    }\n  ],\n  \"category\": \"technical | soft_skills | compliance | methodology | business_tools\",\n  \"urgency_indicators\": [\"array of urgency keywords found\"],\n  \"industry_alignment\": {\n    \"typical_for_industry\": true/false,\n    \"industry_specific_considerations\": \"string\"\n  },\n  \"recommended_follow_up_questions\": [\"array of 3-5 questions to ask\"],\n  \"ambiguity_flags\": [\n    {\n      \"issue\": \"Description of ambiguity\",\n      \"clarification_needed\": \"What to ask client\"\n    }\n  ],\n  \"metadata\": {\n    \"multiple_domains_detected\": true/false,\n    \"cross_functional_training\": true/false,\n    \"requires_human_review\": true/false,\n    \"review_reason\": \"string or null\"\n  }\n}\n\nGuidelines:\n- Be specific: Choose the MOST specific domain that matches\n- Be conservative: High confidence only when clear evidence\n- Flag ambiguity: If multiple domains equally likely, flag for review\n- Consider context: Industry + pain points + explicit mentions\n- Suggest secondary: If enquiry mentions multiple topics"
+  },
+  "domain_catalog": {
+    "domains": [
+      {
+        "domain_id": "DOM001",
+        "domain_name": "Leadership & Management",
+        "category": "soft_skills",
+        "aliases": [
+          "Management Development",
+          "Executive Leadership",
+          "Leadership Training",
+          "Manager Training"
+        ],
+        "primary_keywords": [
+          "leadership",
+          "management",
+          "manager",
+          "executive",
+          "leader",
+          "people management",
+          "team leadership",
+          "supervisor"
+        ],
+        "secondary_keywords": [
+          "coaching",
+          "mentoring",
+          "delegation",
+          "feedback",
+          "performance management",
+          "strategic thinking",
+          "decision making",
+          "change management"
+        ],
+        "pain_point_indicators": [
+          "new managers struggling",
+          "lack coaching skills",
+          "poor delegation",
+          "team motivation issues",
+          "giving feedback",
+          "managing people",
+          "leading teams",
+          "first-time managers"
+        ],
+        "typical_industries": [
+          "All industries",
+          "Technology",
+          "BFSI",
+          "Manufacturing",
+          "Consulting",
+          "Healthcare"
+        ],
+        "contextual_phrases": [
+          "managers need training",
+          "leadership development program",
+          "executive coaching",
+          "management skills",
+          "people leadership"
+        ],
+        "negative_indicators": [
+          "technical training",
+          "programming",
+          "coding",
+          "data analysis",
+          "software"
+        ],
+        "keyword_weight": 1.0,
+        "frequency_score_multiplier": 1.5
+      },
+      {
+        "domain_id": "DOM002",
+        "domain_name": "Agile & Scrum",
+        "category": "methodology",
+        "aliases": [
+          "Agile Methodology",
+          "Scrum Framework",
+          "Agile Training",
+          "Scrum Master Training"
+        ],
+        "primary_keywords": [
+          "agile",
+          "scrum",
+          "sprint",
+          "scrum master",
+          "product owner",
+          "agile transformation",
+          "kanban"
+        ],
+        "secondary_keywords": [
+          "backlog",
+          "user stories",
+          "retrospective",
+          "sprint planning",
+          "daily standup",
+          "velocity",
+          "burndown",
+          "agile ceremonies"
+        ],
+        "pain_point_indicators": [
+          "sprint planning issues",
+          "backlog management",
+          "agile adoption",
+          "slow delivery",
+          "ineffective retrospectives",
+          "team not aligned",
+          "waterfall to agile"
+        ],
+        "typical_industries": [
+          "Technology / IT Services",
+          "Product Companies",
+          "Digital Agencies",
+          "Banking/Fintech",
+          "Startups"
+        ],
+        "contextual_phrases": [
+          "implementing agile",
+          "scrum certification",
+          "agile methodology training",
+          "sprint-based development",
+          "agile project management"
+        ],
+        "negative_indicators": [
+          "waterfall only",
+          "traditional project management"
+        ],
+        "keyword_weight": 1.2,
+        "frequency_score_multiplier": 1.8,
+        "certification_keywords": [
+          "CSM",
+          "PSM",
+          "CSPO",
+          "SAFe",
+          "certified scrum master"
+        ]
+      },
+      {
+        "domain_id": "DOM003",
+        "domain_name": "Data Science & Machine Learning",
+        "category": "technical",
+        "aliases": [
+          "Machine Learning",
+          "AI Training",
+          "Data Science",
+          "Artificial Intelligence"
+        ],
+        "primary_keywords": [
+          "data science",
+          "machine learning",
+          "ML",
+          "AI",
+          "artificial intelligence",
+          "deep learning",
+          "neural networks",
+          "predictive modeling"
+        ],
+        "secondary_keywords": [
+          "python",
+          "tensorflow",
+          "keras",
+          "scikit-learn",
+          "algorithms",
+          "model training",
+          "data analysis",
+          "statistics",
+          "regression",
+          "classification",
+          "clustering"
+        ],
+        "pain_point_indicators": [
+          "lack ML expertise",
+          "deploying models",
+          "data preparation",
+          "choosing algorithms",
+          "business to ML translation",
+          "model accuracy",
+          "ML infrastructure"
+        ],
+        "typical_industries": [
+          "Technology",
+          "BFSI / Fintech",
+          "E-commerce",
+          "Healthcare",
+          "Analytics Companies",
+          "Consulting"
+        ],
+        "contextual_phrases": [
+          "build ML models",
+          "predictive analytics",
+          "data science team",
+          "AI capabilities",
+          "machine learning implementation"
+        ],
+        "negative_indicators": [
+          "basic excel",
+          "no programming",
+          "non-technical team"
+        ],
+        "keyword_weight": 1.3,
+        "frequency_score_multiplier": 2.0,
+        "technical_level": "advanced",
+        "requires_programming": true,
+        "prerequisite_check": {
+          "python_knowledge": "recommended",
+          "statistics_background": "helpful"
+        }
+      },
+      {
+        "domain_id": "DOM004",
+        "domain_name": "DevOps & Cloud",
+        "category": "technical",
+        "aliases": [
+          "DevOps Training",
+          "Cloud Computing",
+          "AWS Training",
+          "Azure Training",
+          "Kubernetes Training"
+        ],
+        "primary_keywords": [
+          "devops",
+          "cloud",
+          "aws",
+          "azure",
+          "gcp",
+          "docker",
+          "kubernetes",
+          "ci/cd",
+          "continuous integration"
+        ],
+        "secondary_keywords": [
+          "jenkins",
+          "gitlab",
+          "terraform",
+          "ansible",
+          "infrastructure as code",
+          "containerization",
+          "orchestration",
+          "deployment pipeline",
+          "cloud migration"
+        ],
+        "pain_point_indicators": [
+          "manual deployments",
+          "slow release cycle",
+          "infrastructure management",
+          "cloud migration",
+          "scaling issues",
+          "deployment failures",
+          "dev and ops silos"
+        ],
+        "typical_industries": [
+          "Technology / IT Services",
+          "SaaS Companies",
+          "Product Companies",
+          "Digital Agencies",
+          "Enterprises undergoing digital transformation"
+        ],
+        "contextual_phrases": [
+          "automate deployment",
+          "cloud infrastructure",
+          "containerize applications",
+          "CI/CD pipeline",
+          "infrastructure automation"
+        ],
+        "negative_indicators": [
+          "no cloud plans",
+          "only on-premise"
+        ],
+        "keyword_weight": 1.3,
+        "frequency_score_multiplier": 1.9,
+        "technical_level": "intermediate_to_advanced",
+        "requires_programming": false,
+        "cloud_platforms": [
+          "AWS",
+          "Azure",
+          "GCP"
+        ]
+      },
+      {
+        "domain_id": "DOM005",
+        "domain_name": "Python Programming",
+        "category": "technical",
+        "aliases": [
+          "Python Training",
+          "Python Development",
+          "Python Course"
+        ],
+        "primary_keywords": [
+          "python",
+          "python programming",
+          "python development",
+          "python training",
+          "learn python"
+        ],
+        "secondary_keywords": [
+          "django",
+          "flask",
+          "pandas",
+          "numpy",
+          "web development",
+          "automation",
+          "scripting",
+          "python basics"
+        ],
+        "pain_point_indicators": [
+          "no programming experience",
+          "need to learn python",
+          "automate tasks",
+          "python for beginners",
+          "transition to python"
+        ],
+        "typical_industries": [
+          "Technology",
+          "Data Analytics",
+          "Finance",
+          "Research",
+          "Any industry (Python is versatile)"
+        ],
+        "contextual_phrases": [
+          "python fundamentals",
+          "learn to code in python",
+          "python for data analysis",
+          "python automation",
+          "web development with python"
+        ],
+        "negative_indicators": [
+          "java only",
+          "no coding needed"
+        ],
+        "keyword_weight": 1.1,
+        "frequency_score_multiplier": 1.6,
+        "technical_level": "beginner_to_advanced",
+        "requires_programming": false,
+        "can_be_beginner": true
+      },
+      {
+        "domain_id": "DOM006",
+        "domain_name": "Excel & Data Analysis",
+        "category": "business_tools",
+        "aliases": [
+          "Advanced Excel",
+          "Excel Training",
+          "Data Analysis with Excel",
+          "Excel for Business"
+        ],
+        "primary_keywords": [
+          "excel",
+          "advanced excel",
+          "microsoft excel",
+          "spreadsheet",
+          "pivot tables",
+          "vlookup"
+        ],
+        "secondary_keywords": [
+          "formulas",
+          "macros",
+          "vba",
+          "pivot",
+          "charts",
+          "data visualization",
+          "dashboards",
+          "power query",
+          "power pivot"
+        ],
+        "pain_point_indicators": [
+          "manual data processing",
+          "report generation",
+          "excel automation",
+          "complex formulas",
+          "data analysis challenges",
+          "time-consuming reports"
+        ],
+        "typical_industries": [
+          "All industries",
+          "BFSI",
+          "Consulting",
+          "Retail",
+          "Manufacturing",
+          "Operations"
+        ],
+        "contextual_phrases": [
+          "improve excel skills",
+          "excel productivity",
+          "data analysis in excel",
+          "excel dashboards",
+          "automate reports"
+        ],
+        "negative_indicators": [
+          "python for analysis",
+          "tableau",
+          "power bi only"
+        ],
+        "keyword_weight": 1.0,
+        "frequency_score_multiplier": 1.5,
+        "technical_level": "beginner_to_advanced",
+        "requires_programming": false,
+        "most_popular": true
+      },
+      {
+        "domain_id": "DOM007",
+        "domain_name": "Communication Skills",
+        "category": "soft_skills",
+        "aliases": [
+          "Business Communication",
+          "Effective Communication",
+          "Communication Training",
+          "Presentation Skills"
+        ],
+        "primary_keywords": [
+          "communication",
+          "presentation",
+          "business communication",
+          "effective communication",
+          "speaking skills"
+        ],
+        "secondary_keywords": [
+          "public speaking",
+          "email writing",
+          "report writing",
+          "active listening",
+          "interpersonal",
+          "verbal communication",
+          "written communication",
+          "presentation skills"
+        ],
+        "pain_point_indicators": [
+          "communication gaps",
+          "poor presentations",
+          "email etiquette",
+          "client communication",
+          "team communication",
+          "unclear messaging"
+        ],
+        "typical_industries": [
+          "All industries",
+          "Sales",
+          "Customer Service",
+          "Consulting",
+          "Technology"
+        ],
+        "contextual_phrases": [
+          "improve communication",
+          "presentation training",
+          "business writing",
+          "communication effectiveness",
+          "speaking confidently"
+        ],
+        "negative_indicators": [
+          "technical training",
+          "programming"
+        ],
+        "keyword_weight": 0.9,
+        "frequency_score_multiplier": 1.4,
+        "technical_level": "non_technical",
+        "universal_skill": true
+      },
+      {
+        "domain_id": "DOM008",
+        "domain_name": "Cybersecurity",
+        "category": "technical",
+        "aliases": [
+          "Information Security",
+          "Security Training",
+          "Ethical Hacking",
+          "InfoSec"
+        ],
+        "primary_keywords": [
+          "cybersecurity",
+          "security",
+          "information security",
+          "infosec",
+          "ethical hacking",
+          "penetration testing"
+        ],
+        "secondary_keywords": [
+          "network security",
+          "application security",
+          "security awareness",
+          "vulnerability",
+          "threat detection",
+          "security audit",
+          "encryption",
+          "firewall"
+        ],
+        "pain_point_indicators": [
+          "security breaches",
+          "compliance requirements",
+          "security awareness",
+          "data protection",
+          "security threats",
+          "vulnerability management"
+        ],
+        "typical_industries": [
+          "BFSI",
+          "Technology",
+          "Healthcare",
+          "E-commerce",
+          "Government",
+          "Any industry with sensitive data"
+        ],
+        "contextual_phrases": [
+          "security training",
+          "protect against threats",
+          "security best practices",
+          "secure our systems",
+          "cybersecurity awareness"
+        ],
+        "negative_indicators": [],
+        "keyword_weight": 1.2,
+        "frequency_score_multiplier": 1.7,
+        "technical_level": "intermediate_to_advanced",
+        "compliance_related": true
+      },
+      {
+        "domain_id": "DOM009",
+        "domain_name": "Project Management (PMP / PRINCE2)",
+        "category": "methodology",
+        "aliases": [
+          "PMP Training",
+          "Project Management",
+          "PRINCE2",
+          "PM Training"
+        ],
+        "primary_keywords": [
+          "project management",
+          "pmp",
+          "prince2",
+          "pmbok",
+          "project manager"
+        ],
+        "secondary_keywords": [
+          "project planning",
+          "risk management",
+          "stakeholder management",
+          "project execution",
+          "project controls",
+          "waterfall",
+          "gantt chart"
+        ],
+        "pain_point_indicators": [
+          "project delays",
+          "budget overruns",
+          "scope creep",
+          "project planning",
+          "managing projects",
+          "project coordination"
+        ],
+        "typical_industries": [
+          "Construction",
+          "IT Services",
+          "Consulting",
+          "Manufacturing",
+          "Engineering"
+        ],
+        "contextual_phrases": [
+          "pmp certification",
+          "project management skills",
+          "managing multiple projects",
+          "project delivery",
+          "project management office"
+        ],
+        "negative_indicators": [
+          "agile only",
+          "scrum only"
+        ],
+        "keyword_weight": 1.1,
+        "frequency_score_multiplier": 1.6,
+        "certification_keywords": [
+          "PMP",
+          "PRINCE2",
+          "CAPM"
+        ]
+      },
+      {
+        "domain_id": "DOM010",
+        "domain_name": "Sales & Negotiation",
+        "category": "soft_skills",
+        "aliases": [
+          "Sales Training",
+          "Negotiation Skills",
+          "Sales Excellence",
+          "Consultative Selling"
+        ],
+        "primary_keywords": [
+          "sales",
+          "selling",
+          "negotiation",
+          "sales training",
+          "business development"
+        ],
+        "secondary_keywords": [
+          "closing deals",
+          "prospecting",
+          "sales pipeline",
+          "customer acquisition",
+          "negotiation tactics",
+          "objection handling",
+          "consultative selling",
+          "account management"
+        ],
+        "pain_point_indicators": [
+          "low conversion",
+          "sales performance",
+          "closing deals",
+          "negotiation skills",
+          "sales team struggling",
+          "revenue targets"
+        ],
+        "typical_industries": [
+          "Sales organizations",
+          "B2B companies",
+          "Retail",
+          "Real Estate",
+          "Technology",
+          "Consulting"
+        ],
+        "contextual_phrases": [
+          "improve sales",
+          "sales effectiveness",
+          "negotiation training",
+          "closing techniques",
+          "sales skills"
+        ],
+        "negative_indicators": [],
+        "keyword_weight": 1.0,
+        "frequency_score_multiplier": 1.5
+      },
+      {
+        "domain_id": "DOM011",
+        "domain_name": "Customer Service Excellence",
+        "category": "soft_skills",
+        "aliases": [
+          "Customer Service Training",
+          "Customer Experience",
+          "CX Training",
+          "Support Training"
+        ],
+        "primary_keywords": [
+          "customer service",
+          "customer experience",
+          "customer support",
+          "cx",
+          "service excellence"
+        ],
+        "secondary_keywords": [
+          "customer satisfaction",
+          "complaint handling",
+          "service quality",
+          "customer retention",
+          "empathy",
+          "service mindset",
+          "customer interaction"
+        ],
+        "pain_point_indicators": [
+          "customer complaints",
+          "low satisfaction scores",
+          "service quality",
+          "customer churn",
+          "support team training",
+          "customer experience issues"
+        ],
+        "typical_industries": [
+          "Retail",
+          "Hospitality",
+          "BFSI",
+          "Telecom",
+          "E-commerce",
+          "Any customer-facing business"
+        ],
+        "contextual_phrases": [
+          "improve customer service",
+          "service excellence",
+          "customer-centric",
+          "support team training",
+          "customer satisfaction"
+        ],
+        "negative_indicators": [],
+        "keyword_weight": 1.0,
+        "frequency_score_multiplier": 1.5
+      },
+      {
+        "domain_id": "DOM012",
+        "domain_name": "Business Intelligence (Power BI / Tableau)",
+        "category": "business_tools",
+        "aliases": [
+          "Power BI Training",
+          "Tableau Training",
+          "BI Tools",
+          "Data Visualization"
+        ],
+        "primary_keywords": [
+          "power bi",
+          "tableau",
+          "business intelligence",
+          "bi",
+          "data visualization"
+        ],
+        "secondary_keywords": [
+          "dashboards",
+          "reporting",
+          "data analytics",
+          "kpi",
+          "metrics",
+          "data storytelling",
+          "dax",
+          "calculated fields"
+        ],
+        "pain_point_indicators": [
+          "reporting challenges",
+          "data visualization",
+          "business insights",
+          "dashboard creation",
+          "data-driven decisions"
+        ],
+        "typical_industries": [
+          "All industries",
+          "Analytics",
+          "Consulting",
+          "BFSI",
+          "Retail",
+          "Operations"
+        ],
+        "contextual_phrases": [
+          "create dashboards",
+          "visualize data",
+          "business analytics",
+          "reporting tools",
+          "data insights"
+        ],
+        "negative_indicators": [
+          "only excel",
+          "no tools needed"
+        ],
+        "keyword_weight": 1.1,
+        "frequency_score_multiplier": 1.6,
+        "technical_level": "intermediate"
+      },
+      {
+        "domain_id": "DOM013",
+        "domain_name": "Soft Skills Development",
+        "category": "soft_skills",
+        "aliases": [
+          "Soft Skills Training",
+          "Professional Skills",
+          "Interpersonal Skills",
+          "Behavioral Training"
+        ],
+        "primary_keywords": [
+          "soft skills",
+          "interpersonal skills",
+          "professional development",
+          "behavioral skills",
+          "people skills"
+        ],
+        "secondary_keywords": [
+          "teamwork",
+          "collaboration",
+          "emotional intelligence",
+          "time management",
+          "problem solving",
+          "critical thinking",
+          "adaptability",
+          "work ethics"
+        ],
+        "pain_point_indicators": [
+          "team collaboration",
+          "interpersonal issues",
+          "professional behavior",
+          "workplace skills",
+          "employee development"
+        ],
+        "typical_industries": [
+          "All industries",
+          "Entry-level programs",
+          "Graduate training",
+          "Professional development"
+        ],
+        "contextual_phrases": [
+          "professional skills",
+          "workplace behavior",
+          "team collaboration",
+          "interpersonal effectiveness",
+          "soft skills program"
+        ],
+        "negative_indicators": [
+          "only technical",
+          "hard skills only"
+        ],
+        "keyword_weight": 0.9,
+        "frequency_score_multiplier": 1.3
+      },
+      {
+        "domain_id": "DOM014",
+        "domain_name": "Java Programming",
+        "category": "technical",
+        "aliases": [
+          "Java Training",
+          "Java Development",
+          "Core Java",
+          "Advanced Java"
+        ],
+        "primary_keywords": [
+          "java",
+          "java programming",
+          "java development",
+          "core java",
+          "advanced java"
+        ],
+        "secondary_keywords": [
+          "spring",
+          "hibernate",
+          "j2ee",
+          "servlets",
+          "jsp",
+          "java frameworks",
+          "object oriented",
+          "oop"
+        ],
+        "pain_point_indicators": [
+          "learn java",
+          "java skills gap",
+          "java development",
+          "enterprise java",
+          "java training needed"
+        ],
+        "typical_industries": [
+          "Technology",
+          "BFSI",
+          "Enterprise Software",
+          "IT Services"
+        ],
+        "contextual_phrases": [
+          "java training",
+          "java developers",
+          "enterprise java",
+          "java programming course",
+          "java skills"
+        ],
+        "negative_indicators": [
+          "python only",
+          "no programming"
+        ],
+        "keyword_weight": 1.1,
+        "frequency_score_multiplier": 1.6,
+        "technical_level": "beginner_to_advanced",
+        "requires_programming": false,
+        "can_be_beginner": true
+      },
+      {
+        "domain_id": "DOM015",
+        "domain_name": "Other",
+        "category": "other",
+        "aliases": [
+          "Custom Training",
+          "Other Topics"
+        ],
+        "primary_keywords": [],
+        "secondary_keywords": [],
+        "pain_point_indicators": [],
+        "typical_industries": [
+          "All"
+        ],
+        "contextual_phrases": [],
+        "negative_indicators": [],
+        "keyword_weight": 0.0,
+        "frequency_score_multiplier": 0.0,
+        "fallback_domain": true,
+        "requires_manual_specification": true
+      }
+    ]
+  },
+  "multi_domain_detection": {
+    "enabled": true,
+    "description": "Detect when enquiry spans multiple training domains",
+    "detection_rules": [
+      {
+        "rule_id": "MULTI_001",
+        "name": "Multiple High Confidence Matches",
+        "condition": "multiple_domains_with_confidence_above_0.70",
+        "action": {
+          "flag_as_multi_domain": true,
+          "present_all_options": true,
+          "suggest_bundling": true
+        }
+      },
+      {
+        "rule_id": "MULTI_002",
+        "name": "Cross-Functional Training Program",
+        "condition": "keywords_from_3_or_more_categories",
+        "action": {
+          "flag_as_cross_functional": true,
+          "recommend_program_approach": true,
+          "suggest_consultation": true
+        }
+      }
+    ],
+    "common_combinations": [
+      {
+        "combination_id": "COMBO_001",
+        "domains": [
+          "Leadership & Management",
+          "Communication Skills"
+        ],
+        "common_in_industries": [
+          "All"
+        ],
+        "suggested_approach": "Combined leadership development program"
+      },
+      {
+        "combination_id": "COMBO_002",
+        "domains": [
+          "Agile & Scrum",
+          "DevOps & Cloud"
+        ],
+        "common_in_industries": [
+          "Technology",
+          "Product Companies"
+        ],
+        "suggested_approach": "Modern software development practices bundle"
+      },
+      {
+        "combination_id": "COMBO_003",
+        "domains": [
+          "Data Science & Machine Learning",
+          "Python Programming"
+        ],
+        "common_in_industries": [
+          "Technology",
+          "Analytics",
+          "Finance"
+        ],
+        "suggested_approach": "Python for Data Science comprehensive program"
+      },
+      {
+        "combination_id": "COMBO_004",
+        "domains": [
+          "Excel & Data Analysis",
+          "Business Intelligence (Power BI / Tableau)"
+        ],
+        "common_in_industries": [
+          "All"
+        ],
+        "suggested_approach": "Complete data analysis toolkit"
+      }
+    ]
+  },
+  "industry_based_inference": {
+    "enabled": true,
+    "description": "Use company industry to inform domain identification",
+    "industry_training_patterns": {
+      "Technology / IT Services": {
+        "high_probability_domains": [
+          "Agile & Scrum",
+          "DevOps & Cloud",
+          "Data Science & Machine Learning",
+          "Python Programming",
+          "Java Programming"
+        ],
+        "medium_probability_domains": [
+          "Leadership & Management",
+          "Project Management (PMP / PRINCE2)"
+        ],
+        "low_probability_domains": [
+          "Customer Service Excellence"
+        ]
+      },
+      "BFSI (Banking, Financial Services, Insurance)": {
+        "high_probability_domains": [
+          "Data Science & Machine Learning",
+          "Excel & Data Analysis",
+          "Business Intelligence (Power BI / Tableau)",
+          "Cybersecurity",
+          "Leadership & Management"
+        ],
+        "medium_probability_domains": [
+          "Sales & Negotiation",
+          "Customer Service Excellence",
+          "Agile & Scrum"
+        ],
+        "low_probability_domains": [
+          "DevOps & Cloud"
+        ]
+      },
+      "Manufacturing": {
+        "high_probability_domains": [
+          "Leadership & Management",
+          "Project Management (PMP / PRINCE2)",
+          "Excel & Data Analysis"
+        ],
+        "medium_probability_domains": [
+          "Soft Skills Development",
+          "Business Intelligence (Power BI / Tableau)"
+        ],
+        "low_probability_domains": [
+          "Python Programming",
+          "DevOps & Cloud"
+        ]
+      },
+      "Retail / E-commerce": {
+        "high_probability_domains": [
+          "Customer Service Excellence",
+          "Sales & Negotiation",
+          "Excel & Data Analysis",
+          "Business Intelligence (Power BI / Tableau)"
+        ],
+        "medium_probability_domains": [
+          "Data Science & Machine Learning",
+          "Leadership & Management"
+        ],
+        "low_probability_domains": [
+          "Java Programming"
+        ]
+      },
+      "Healthcare / Pharma": {
+        "high_probability_domains": [
+          "Leadership & Management",
+          "Customer Service Excellence",
+          "Communication Skills",
+          "Cybersecurity"
+        ],
+        "medium_probability_domains": [
+          "Data Science & Machine Learning",
+          "Excel & Data Analysis"
+        ],
+        "low_probability_domains": [
+          "DevOps & Cloud"
+        ]
+      },
+      "Consulting": {
+        "high_probability_domains": [
+          "Leadership & Management",
+          "Communication Skills",
+          "Excel & Data Analysis",
+          "Business Intelligence (Power BI / Tableau)",
+          "Sales & Negotiation"
+        ],
+        "medium_probability_domains": [
+          "Data Science & Machine Learning",
+          "Soft Skills Development"
+        ],
+        "low_probability_domains": []
+      }
+    },
+    "confidence_boost": {
+      "high_probability_match": 0.15,
+      "medium_probability_match": 0.08,
+      "low_probability_match": -0.05
+    }
+  },
+  "ambiguity_handling": {
+    "enabled": true,
+    "description": "Handle cases where domain is unclear or ambiguous",
+    "scenarios": [
+      {
+        "scenario_id": "AMB_001",
+        "name": "No Clear Keywords",
+        "condition": "no_keywords_matched_and_confidence_below_0.40",
+        "action": {
+          "flag_for_manual_review": true,
+          "suggest_domains_based_on_industry": true,
+          "request_clarification": true,
+          "clarification_questions": [
+            "What specific skills or topics should the training cover?",
+            "What business challenges are you trying to address?",
+            "Are there any specific tools or technologies involved?"
+          ]
+        }
+      },
+      {
+        "scenario_id": "AMB_002",
+        "name": "Conflicting Keywords",
+        "condition": "keywords_from_multiple_unrelated_domains",
+        "action": {
+          "present_top_3_matches": true,
+          "ask_user_to_select": true,
+          "provide_domain_descriptions": true
+        }
+      },
+      {
+        "scenario_id": "AMB_003",
+        "name": "Generic Business Training Request",
+        "condition": "vague_terms_like_business_skills_corporate_training",
+        "action": {
+          "request_clarification": true,
+          "suggest_popular_domains": [
+            "Leadership & Management",
+            "Communication Skills",
+            "Excel & Data Analysis",
+            "Soft Skills Development"
+          ],
+          "clarification_message": "We offer training across multiple domains. Could you please specify which area you're most interested in?"
+        }
+      }
+    ],
+    "fallback_strategy": {
+      "if_confidence_below_threshold": {
+        "threshold": 0.40,
+        "actions": [
+          "flag_for_manual_review",
+          "present_top_3_candidates",
+          "send_discovery_questions",
+          "assign_to_senior_sales_rep"
+        ]
+      },
+      "default_domain": "Other",
+      "require_manual_specification": true
+    }
+  },
+  "keyword_analysis_rules": {
+    "scoring_algorithm": {
+      "exact_match_score": 10,
+      "partial_match_score": 5,
+      "contextual_match_score": 7,
+      "pain_point_match_score": 8,
+      "industry_alignment_bonus": 3
+    },
+    "keyword_proximity": {
+      "enabled": true,
+      "description": "Keywords appearing close together get higher weight",
+      "proximity_boost": 1.5,
+      "max_distance_words": 10
+    },
+    "keyword_frequency": {
+      "enabled": true,
+      "description": "Multiple mentions of same keyword increase confidence",
+      "frequency_multiplier": 1.2,
+      "max_multiplier_cap": 2.0
+    },
+    "negation_detection": {
+      "enabled": true,
+      "description": "Detect negative phrases that exclude domains",
+      "negation_words": [
+        "not",
+        "no",
+        "don't",
+        "doesn't",
+        "won't",
+        "without",
+        "except",
+        "excluding"
+      ],
+      "negation_penalty": -15,
+      "negation_window_words": 5
+    }
+  },
+  "confidence_score_calculation": {
+    "formula": "weighted_sum_of_components",
+    "components": [
+      {
+        "component": "keyword_matching_score",
+        "weight": 0.35,
+        "max_value": 100,
+        "calculation": "sum of (keyword matches * keyword_weight * frequency_multiplier)"
+      },
+      {
+        "component": "semantic_similarity_score",
+        "weight": 0.40,
+        "max_value": 100,
+        "calculation": "AI semantic analysis of enquiry vs domain descriptions"
+      },
+      {
+        "component": "industry_alignment_score",
+        "weight": 0.15,
+        "max_value": 100,
+        "calculation": "probability of domain for given industry"
+      },
+      {
+        "component": "pain_point_match_score",
+        "weight": 0.10,
+        "max_value": 100,
+        "calculation": "match between extracted pain points and domain-typical challenges"
+      }
+    ],
+    "normalization": "scale_to_0_to_1",
+    "final_formula": "(keyword_score * 0.35 + semantic_score * 0.40 + industry_score * 0.15 + pain_score * 0.10) / 100"
+  },
+  "post_identification_actions": {
+    "high_confidence_actions": [
+      {
+        "action": "auto_assign_domain",
+        "condition": "confidence >= 0.80"
+      },
+      {
+        "action": "load_domain_configuration",
+        "parameters": {
+          "domain_specific_questions": true,
+          "pain_points": true,
+          "curriculum_template": true,
+          "pricing_guidance": true
+        }
+      },
+      {
+        "action": "trigger_conditional_rules",
+        "description": "Apply domain-specific conditional logic rules"
+      }
+    ],
+    "medium_confidence_actions": [
+      {
+        "action": "suggest_domain_with_confirmation",
+        "condition": "confidence 0.60-0.79"
+      },
+      {
+        "action": "show_confidence_indicator",
+        "ui_element": "confidence badge"
+      },
+      {
+        "action": "request_user_verification",
+        "message": "We detected this as {domain_name}. Is this correct?"
+      }
+    ],
+    "low_confidence_actions": [
+      {
+        "action": "present_multiple_options",
+        "condition": "confidence < 0.60"
+      },
+      {
+        "action": "flag_for_manual_review",
+        "assign_to": "sales_manager"
+      },
+      {
+        "action": "send_discovery_questions",
+        "include_domain_clarification": true
+      }
+    ]
+  },
+  "domain_category_mapping": {
+    "technical": [
+      "Data Science & Machine Learning",
+      "DevOps & Cloud",
+      "Python Programming",
+      "Java Programming",
+      "Cybersecurity"
+    ],
+    "soft_skills": [
+      "Leadership & Management",
+      "Communication Skills",
+      "Soft Skills Development",
+      "Sales & Negotiation",
+      "Customer Service Excellence"
+    ],
+    "methodology": [
+      "Agile & Scrum",
+      "Project Management (PMP / PRINCE2)"
+    ],
+    "business_tools": [
+      "Excel & Data Analysis",
+      "Business Intelligence (Power BI / Tableau)"
+    ],
+    "other": [
+      "Other"
+    ]
+  },
+  "learning_and_improvement": {
+    "enabled": true,
+    "description": "System learns from corrections and improves over time",
+    "feedback_capture": {
+      "capture_manual_corrections": true,
+      "capture_confidence_vs_accuracy": true,
+      "capture_false_positives": true,
+      "capture_false_negatives": true
+    },
+    "improvement_metrics": [
+      "accuracy_rate",
+      "confidence_calibration",
+      "manual_override_rate",
+      "domain_confusion_matrix"
+    ],
+    "retraining_triggers": {
+      "accuracy_below_threshold": 0.75,
+      "manual_override_rate_above": 0.30,
+      "new_domains_added": true,
+      "quarterly_scheduled_review": true
+    }
+  },
+  "special_cases": {
+    "custom_training_requests": {
+      "keywords": [
+        "custom",
+        "customized",
+        "bespoke",
+        "tailor-made",
+        "specific to our needs"
+      ],
+      "action": {
+        "flag_as_custom": true,
+        "assign_to_curriculum_team": true,
+        "request_detailed_requirements": true
+      }
+    },
+    "certification_focused": {
+      "keywords": [
+        "certification",
+        "certified",
+        "exam prep",
+        "certificate"
+      ],
+      "certification_domains": [
+        "Agile & Scrum",
+        "Project Management (PMP / PRINCE2)",
+        "Cybersecurity"
+      ],
+      "action": {
+        "flag_certification_requirement": true,
+        "include_exam_fees_in_pricing": true,
+        "verify_certification_body": true
+      }
+    },
+    "compliance_training": {
+      "keywords": [
+        "compliance",
+        "regulatory",
+        "mandatory",
+        "audit",
+        "sox",
+        "gdpr",
+        "hipaa"
+      ],
+      "action": {
+        "flag_as_compliance": true,
+        "check_regulatory_requirements": true,
+        "assign_to_compliance_specialist": true
+      }
+    }
+  },
+  "output_format": {
+    "json_schema": {
+      "primary_domain": {
+        "domain_id": "string",
+        "domain_name": "string",
+        "category": "string",
+        "confidence_score": "float 0-1",
+        "confidence_level": "high | medium | low",
+        "reasoning": "string",
+        "matching_keywords": "array",
+        "matching_pain_points": "array"
+      },
+      "secondary_domains": "array of domain objects",
+      "multi_domain_flag": "boolean",
+      "ambiguity_flags": "array",
+      "industry_alignment": "object",
+      "recommended_actions": "array",
+      "manual_review_required": "boolean",
+      "review_reason": "string or null"
+    }
+  },
+  "metadata": {
+    "total_domains": 15,
+    "categories": 5,
+    "keyword_matching_weight": 0.35,
+    "ai_semantic_weight": 0.40,
+    "industry_context_weight": 0.15,
+    "pain_point_weight": 0.10,
+    "high_confidence_threshold": 0.80,
+    "medium_confidence_threshold": 0.60,
+    "manual_review_threshold": 0.40
+  }
+}

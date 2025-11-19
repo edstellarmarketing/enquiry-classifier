@@ -1,0 +1,1000 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "Notification and reminder rules for SalesIQ enquiry management",
+  "notification_channels": {
+    "supported_channels": [
+      "in_app",
+      "email",
+      "browser_push",
+      "slack",
+      "sms"
+    ],
+    "default_channels": [
+      "in_app",
+      "email"
+    ],
+    "channel_settings": {
+      "in_app": {
+        "enabled": true,
+        "retention_days": 30,
+        "mark_read_after_view": true,
+        "show_badge_count": true
+      },
+      "email": {
+        "enabled": true,
+        "from_address": "salesiq@edstellar.com",
+        "from_name": "Edstellar SalesIQ",
+        "reply_to": "sales@edstellar.com",
+        "include_logo": true,
+        "email_template_style": "professional"
+      },
+      "browser_push": {
+        "enabled": false,
+        "requires_permission": true,
+        "icon_url": "/assets/edstellar-icon.png"
+      },
+      "slack": {
+        "enabled": false,
+        "webhook_url": "configure_in_settings",
+        "default_channel": "#sales-notifications"
+      },
+      "sms": {
+        "enabled": false,
+        "provider": "twilio",
+        "only_for_urgent": true
+      }
+    }
+  },
+  "notification_triggers": {
+    "enquiry_lifecycle": [
+      {
+        "trigger_id": "NOTIF_001",
+        "name": "New Enquiry Created",
+        "event": "enquiry_created",
+        "description": "Notification when a new enquiry is created",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [],
+          "bcc": []
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "New Enquiry Created: {enquiry_id}",
+          "message": "A new training enquiry has been created for {company_name}. Start discovery to gather more information.",
+          "icon": "📥",
+          "priority": "normal",
+          "action_button": {
+            "text": "View Enquiry",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "email_template": {
+          "subject": "New Training Enquiry: {company_name}",
+          "body_template": "email_templates/new_enquiry.html",
+          "variables": [
+            "enquiry_id",
+            "company_name",
+            "training_domain",
+            "contact_name",
+            "created_at"
+          ]
+        },
+        "timing": {
+          "send_immediately": true,
+          "delay_seconds": 0
+        }
+      },
+      {
+        "trigger_id": "NOTIF_002",
+        "name": "Milestone Completed - Initial Capture",
+        "event": "milestone_1_completed",
+        "description": "Notification when basic enquiry info is captured (10%+)",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "✅ Enquiry {enquiry_id} - Initial Capture Complete",
+          "message": "Basic information captured for {company_name}. Continue discovery to unlock proposal builder.",
+          "icon": "✅",
+          "priority": "low",
+          "action_button": {
+            "text": "Continue Discovery",
+            "link": "/enquiry/{enquiry_id}/discovery"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_003",
+        "name": "Milestone Completed - Halfway Point",
+        "event": "milestone_2_completed",
+        "description": "Notification when 30% completeness reached",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "🎯 Halfway There! - {enquiry_id}",
+          "message": "You're 30% complete for {company_name}. Keep going - just a few more questions to unlock proposal builder!",
+          "icon": "🎯",
+          "priority": "low",
+          "action_button": {
+            "text": "Complete Discovery",
+            "link": "/enquiry/{enquiry_id}/discovery"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_004",
+        "name": "Proposal Builder Unlocked",
+        "event": "proposal_unlocked",
+        "description": "Celebration notification when 60% threshold crossed",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [
+            "sales_manager"
+          ]
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "🎉 Proposal Ready! - {enquiry_id}",
+          "message": "Congratulations! You've gathered enough information to create a professional proposal for {company_name}.",
+          "icon": "🎉",
+          "priority": "high",
+          "celebration": true,
+          "show_confetti": true,
+          "action_button": {
+            "text": "Generate Proposal",
+            "link": "/enquiry/{enquiry_id}/proposal"
+          }
+        },
+        "email_template": {
+          "subject": "🎉 Proposal Ready for {company_name}",
+          "body_template": "email_templates/proposal_ready.html",
+          "variables": [
+            "enquiry_id",
+            "company_name",
+            "completeness_percentage",
+            "training_domain",
+            "num_participants"
+          ]
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_005",
+        "name": "Proposal Generated Successfully",
+        "event": "proposal_generated",
+        "description": "Confirmation when proposal is generated",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "✅ Proposal Generated - {enquiry_id}",
+          "message": "Your proposal for {company_name} is ready to download and send.",
+          "icon": "📄",
+          "priority": "normal",
+          "action_button": {
+            "text": "Download Proposal",
+            "link": "/enquiry/{enquiry_id}/proposal/download"
+          }
+        },
+        "email_template": {
+          "subject": "Your proposal for {company_name} is ready",
+          "body_template": "email_templates/proposal_generated.html",
+          "attach_proposal": true
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_006",
+        "name": "Proposal Sent to Client",
+        "event": "proposal_sent",
+        "description": "Confirmation when proposal is emailed to client",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "📧 Proposal Sent - {enquiry_id}",
+          "message": "Proposal successfully sent to {contact_email}. Follow up in 2-3 days.",
+          "icon": "📧",
+          "priority": "normal",
+          "action_button": {
+            "text": "View Enquiry",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        },
+        "auto_create_reminder": {
+          "enabled": true,
+          "reminder_type": "follow_up",
+          "delay_days": 3,
+          "message": "Follow up on proposal sent to {company_name}"
+        }
+      },
+      {
+        "trigger_id": "NOTIF_007",
+        "name": "Enquiry Status Changed",
+        "event": "status_changed",
+        "description": "Notification when enquiry status changes",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "Status Updated - {enquiry_id}",
+          "message": "Enquiry for {company_name} moved to: {new_status}",
+          "icon": "🔄",
+          "priority": "low",
+          "action_button": {
+            "text": "View Details",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        },
+        "conditions": {
+          "exclude_statuses": [
+            "draft"
+          ]
+        }
+      }
+    ],
+    "urgency_alerts": [
+      {
+        "trigger_id": "NOTIF_101",
+        "name": "Urgent Enquiry Detected",
+        "event": "urgent_flag_set",
+        "description": "Alert when enquiry is flagged as urgent",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [
+            "sales_manager"
+          ]
+        },
+        "channels": [
+          "in_app",
+          "email",
+          "slack"
+        ],
+        "notification_content": {
+          "title": "🔥 URGENT Enquiry - {enquiry_id}",
+          "message": "Urgent training requirement from {company_name}. Timeline: {preferred_timeline}. Immediate action required!",
+          "icon": "🔥",
+          "priority": "urgent",
+          "sound": "alert",
+          "action_button": {
+            "text": "Take Action Now",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "email_template": {
+          "subject": "🔥 URGENT: Training Enquiry - {company_name}",
+          "body_template": "email_templates/urgent_enquiry.html",
+          "high_priority": true
+        },
+        "slack_message": {
+          "channel": "#urgent-sales",
+          "mention": "@sales-team",
+          "message": "🔥 URGENT enquiry from *{company_name}*\nTimeline: {preferred_timeline}\nTopic: {training_domain}\n<{enquiry_link}|View Enquiry>"
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_102",
+        "name": "Short Notice Training Request",
+        "event": "short_notice_detected",
+        "description": "Alert when start date is less than 14 days away",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [
+            "sales_manager"
+          ]
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "⚡ Short Notice - {enquiry_id}",
+          "message": "Training start date is {days_away} days away for {company_name}. Check trainer availability urgently!",
+          "icon": "⚡",
+          "priority": "high",
+          "action_button": {
+            "text": "Check Availability",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        },
+        "conditions": {
+          "start_date_within_days": 14
+        }
+      }
+    ],
+    "quality_warnings": [
+      {
+        "trigger_id": "NOTIF_201",
+        "name": "Missing Critical Information",
+        "event": "critical_field_missing",
+        "description": "Warning when trying to generate proposal with missing critical fields",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "⚠️ Missing Information - {enquiry_id}",
+          "message": "Cannot generate proposal yet. Missing: {missing_fields}. Please complete discovery.",
+          "icon": "⚠️",
+          "priority": "normal",
+          "action_button": {
+            "text": "Complete Fields",
+            "link": "/enquiry/{enquiry_id}/discovery"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_202",
+        "name": "Budget vs Participants Warning",
+        "event": "budget_mismatch_detected",
+        "description": "Warning when budget seems insufficient for participant count",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "💡 Budget Review Needed - {enquiry_id}",
+          "message": "Budget ({budget_range}) may be low for {num_participants} participants. Typical range: {suggested_range}. Consider discussing with client.",
+          "icon": "💡",
+          "priority": "low",
+          "action_button": {
+            "text": "Review Budget",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_203",
+        "name": "Large Group Special Handling",
+        "event": "large_group_detected",
+        "description": "Advisory when participant count exceeds 50",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "📊 Large Group Advisory - {enquiry_id}",
+          "message": "Group size is {num_participants}. Consider: batch training, multiple trainers, extended duration. Check with sales manager for volume pricing.",
+          "icon": "📊",
+          "priority": "normal",
+          "action_button": {
+            "text": "View Recommendations",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        },
+        "conditions": {
+          "num_participants_greater_than": 50
+        }
+      }
+    ],
+    "special_client_alerts": [
+      {
+        "trigger_id": "NOTIF_301",
+        "name": "Enterprise Client Detected",
+        "event": "enterprise_client_flagged",
+        "description": "Alert when Fortune 500 or large enterprise enquiry is created",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [
+            "sales_manager",
+            "account_director"
+          ]
+        },
+        "channels": [
+          "in_app",
+          "email",
+          "slack"
+        ],
+        "notification_content": {
+          "title": "⭐ Enterprise Client - {enquiry_id}",
+          "message": "High-value enquiry from {company_name} ({company_size}). Premium handling recommended: senior trainer, dedicated account manager, custom curriculum.",
+          "icon": "⭐",
+          "priority": "high",
+          "action_button": {
+            "text": "View Enquiry",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "email_template": {
+          "subject": "⭐ Enterprise Client Enquiry: {company_name}",
+          "body_template": "email_templates/enterprise_client.html"
+        },
+        "slack_message": {
+          "channel": "#enterprise-sales",
+          "mention": "@sales-director",
+          "message": "⭐ *Enterprise Client Enquiry*\nCompany: *{company_name}*\nSize: {company_size}\nTopic: {training_domain}\n<{enquiry_link}|View Details>"
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_302",
+        "name": "Repeat Client Recognition",
+        "event": "repeat_client_detected",
+        "description": "Notification when existing client submits new enquiry",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "🔄 Repeat Client - {enquiry_id}",
+          "message": "Welcome back {company_name}! Previous training: {last_training_date}. Some details auto-populated from past enquiries.",
+          "icon": "🔄",
+          "priority": "normal",
+          "action_button": {
+            "text": "View History",
+            "link": "/enquiry/{enquiry_id}/history"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      },
+      {
+        "trigger_id": "NOTIF_303",
+        "name": "Competitive Scenario Detected",
+        "event": "competitor_mentioned",
+        "description": "Alert when competitor names are mentioned in enquiry",
+        "enabled": true,
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [
+            "sales_manager"
+          ]
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "⚔️ Competitive Scenario - {enquiry_id}",
+          "message": "Client mentioned competitors or comparing vendors. Emphasize Edstellar differentiators: trainer expertise, customization, post-training support.",
+          "icon": "⚔️",
+          "priority": "high",
+          "action_button": {
+            "text": "View Strategy",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "timing": {
+          "send_immediately": true
+        }
+      }
+    ]
+  },
+  "reminder_rules": {
+    "stale_enquiry_reminders": [
+      {
+        "reminder_id": "REM_001",
+        "name": "Incomplete Enquiry - 3 Days",
+        "description": "Reminder for enquiries below 30% completeness after 3 days",
+        "enabled": true,
+        "trigger_condition": {
+          "completeness_below": 30,
+          "days_since_creation": 3,
+          "status": [
+            "draft",
+            "discovery"
+          ]
+        },
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "📋 Enquiry Needs Attention - {enquiry_id}",
+          "message": "Enquiry for {company_name} is only {completeness}% complete. Critical information missing. Please continue discovery.",
+          "icon": "📋",
+          "priority": "normal",
+          "action_button": {
+            "text": "Complete Discovery",
+            "link": "/enquiry/{enquiry_id}/discovery"
+          }
+        },
+        "email_template": {
+          "subject": "Reminder: Complete enquiry for {company_name}",
+          "body_template": "email_templates/incomplete_reminder.html"
+        },
+        "timing": {
+          "check_frequency": "daily",
+          "send_at_time": "09:00"
+        },
+        "repeat": {
+          "enabled": true,
+          "repeat_after_days": 3,
+          "max_reminders": 2
+        }
+      },
+      {
+        "reminder_id": "REM_002",
+        "name": "Semi-Complete Enquiry - 5 Days",
+        "description": "Reminder for enquiries between 31-60% after 5 days",
+        "enabled": true,
+        "trigger_condition": {
+          "completeness_between": [
+            31,
+            60
+          ],
+          "days_since_creation": 5,
+          "status": [
+            "discovery"
+          ]
+        },
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "🎯 Almost There - {enquiry_id}",
+          "message": "You're {completeness}% done with {company_name}. Just {remaining_questions} more questions to unlock proposal builder!",
+          "icon": "🎯",
+          "priority": "normal",
+          "action_button": {
+            "text": "Finish Discovery",
+            "link": "/enquiry/{enquiry_id}/discovery"
+          }
+        },
+        "email_template": {
+          "subject": "You're close! Finish enquiry for {company_name}",
+          "body_template": "email_templates/semicomplete_reminder.html"
+        },
+        "timing": {
+          "check_frequency": "daily",
+          "send_at_time": "10:00"
+        },
+        "repeat": {
+          "enabled": true,
+          "repeat_after_days": 4,
+          "max_reminders": 2
+        }
+      },
+      {
+        "reminder_id": "REM_003",
+        "name": "Proposal Ready but Not Generated",
+        "description": "Reminder when proposal is unlocked but not generated after 2 days",
+        "enabled": true,
+        "trigger_condition": {
+          "completeness_above": 60,
+          "days_since_unlock": 2,
+          "proposal_generated": false,
+          "status": "proposal_ready"
+        },
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "📄 Generate Proposal - {enquiry_id}",
+          "message": "Your enquiry for {company_name} is ready for proposal generation. Don't delay - generate and send the proposal!",
+          "icon": "📄",
+          "priority": "normal",
+          "action_button": {
+            "text": "Generate Now",
+            "link": "/enquiry/{enquiry_id}/proposal"
+          }
+        },
+        "email_template": {
+          "subject": "Ready to send proposal to {company_name}",
+          "body_template": "email_templates/proposal_pending.html"
+        },
+        "timing": {
+          "check_frequency": "daily",
+          "send_at_time": "11:00"
+        },
+        "repeat": {
+          "enabled": false
+        }
+      }
+    ],
+    "follow_up_reminders": [
+      {
+        "reminder_id": "REM_101",
+        "name": "Proposal Sent - Follow Up",
+        "description": "Auto-reminder to follow up 3 days after proposal is sent",
+        "enabled": true,
+        "trigger_condition": {
+          "event": "proposal_sent",
+          "days_after_event": 3
+        },
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "📞 Follow Up - {enquiry_id}",
+          "message": "It's been 3 days since you sent the proposal to {company_name}. Time to follow up! Call or email {contact_name}.",
+          "icon": "📞",
+          "priority": "normal",
+          "action_button": {
+            "text": "Log Follow Up",
+            "link": "/enquiry/{enquiry_id}/activity"
+          }
+        },
+        "email_template": {
+          "subject": "Follow up: Proposal sent to {company_name}",
+          "body_template": "email_templates/followup_reminder.html"
+        },
+        "timing": {
+          "exact_days_after": 3,
+          "send_at_time": "09:30"
+        }
+      },
+      {
+        "reminder_id": "REM_102",
+        "name": "Awaiting Client Response",
+        "description": "Reminder if no client response after 7 days",
+        "enabled": true,
+        "trigger_condition": {
+          "status": "proposal_sent",
+          "days_since_status_change": 7,
+          "no_client_response": true
+        },
+        "recipients": {
+          "primary": "enquiry_owner"
+        },
+        "channels": [
+          "in_app"
+        ],
+        "notification_content": {
+          "title": "⏰ No Response - {enquiry_id}",
+          "message": "No response from {company_name} for 7 days. Consider: follow-up call, revised proposal, or close as 'No Response'.",
+          "icon": "⏰",
+          "priority": "normal",
+          "action_button": {
+            "text": "Take Action",
+            "link": "/enquiry/{enquiry_id}"
+          }
+        },
+        "timing": {
+          "check_frequency": "daily",
+          "send_at_time": "14:00"
+        }
+      }
+    ],
+    "deadline_reminders": [
+      {
+        "reminder_id": "REM_201",
+        "name": "Approaching Training Start Date",
+        "description": "Reminder 7 days before training start date",
+        "enabled": true,
+        "trigger_condition": {
+          "days_before_start_date": 7,
+          "status": [
+            "confirmed",
+            "proposal_accepted"
+          ]
+        },
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [
+            "operations_team"
+          ]
+        },
+        "channels": [
+          "in_app",
+          "email"
+        ],
+        "notification_content": {
+          "title": "📅 Training in 7 Days - {enquiry_id}",
+          "message": "Training for {company_name} starts in 7 days ({start_date}). Confirm: trainer assignment, materials, venue/platform setup.",
+          "icon": "📅",
+          "priority": "high",
+          "action_button": {
+            "text": "Review Checklist",
+            "link": "/enquiry/{enquiry_id}/preparation"
+          }
+        },
+        "timing": {
+          "exact_days_before_start": 7,
+          "send_at_time": "09:00"
+        }
+      },
+      {
+        "reminder_id": "REM_202",
+        "name": "Training Tomorrow",
+        "description": "Final reminder 1 day before training",
+        "enabled": true,
+        "trigger_condition": {
+          "days_before_start_date": 1,
+          "status": "confirmed"
+        },
+        "recipients": {
+          "primary": "enquiry_owner",
+          "cc": [
+            "trainer",
+            "operations_team"
+          ]
+        },
+        "channels": [
+          "in_app",
+          "email",
+          "sms"
+        ],
+        "notification_content": {
+          "title": "🚀 Training Tomorrow - {enquiry_id}",
+          "message": "Final reminder: Training for {company_name} starts tomorrow ({start_date}). All set?",
+          "icon": "🚀",
+          "priority": "urgent",
+          "action_button": {
+            "text": "Final Checklist",
+            "link": "/enquiry/{enquiry_id}/preparation"
+          }
+        },
+        "timing": {
+          "exact_days_before_start": 1,
+          "send_at_time": "17:00"
+        }
+      }
+    ]
+  },
+  "digest_notifications": {
+    "daily_digest": {
+      "enabled": true,
+      "name": "Daily Sales Digest",
+      "description": "Daily summary of enquiries and activities",
+      "recipients": {
+        "primary": "all_sales_users",
+        "role_based": true
+      },
+      "channels": [
+        "email"
+      ],
+      "schedule": {
+        "frequency": "daily",
+        "send_at_time": "08:00",
+        "timezone": "Asia/Kolkata",
+        "skip_weekends": true,
+        "skip_holidays": true
+      },
+      "content_sections": [
+        {
+          "section": "New Enquiries",
+          "include": "enquiries_created_yesterday",
+          "limit": 10
+        },
+        {
+          "section": "Proposal Ready",
+          "include": "enquiries_proposal_ready",
+          "limit": 5
+        },
+        {
+          "section": "Awaiting Your Action",
+          "include": "enquiries_needing_attention",
+          "limit": 10
+        },
+        {
+          "section": "Follow Ups Due Today",
+          "include": "follow_ups_due_today",
+          "limit": 5
+        },
+        {
+          "section": "Upcoming Trainings (Next 7 Days)",
+          "include": "trainings_next_week",
+          "limit": 5
+        }
+      ],
+      "email_template": {
+        "subject": "Your Daily Sales Digest - {date}",
+        "body_template": "email_templates/daily_digest.html"
+      }
+    },
+    "weekly_summary": {
+      "enabled": true,
+      "name": "Weekly Performance Summary",
+      "description": "Weekly summary of sales activities and metrics",
+      "recipients": {
+        "primary": "sales_managers",
+        "cc": [
+          "sales_director"
+        ]
+      },
+      "channels": [
+        "email"
+      ],
+      "schedule": {
+        "frequency": "weekly",
+        "day_of_week": "Monday",
+        "send_at_time": "09:00",
+        "timezone": "Asia/Kolkata"
+      },
+      "content_sections": [
+        {
+          "section": "Last Week Overview",
+          "metrics": [
+            "total_enquiries_created",
+            "proposals_generated",
+            "proposals_sent",
+            "conversion_rate"
+          ]
+        },
+        {
+          "section": "Team Performance",
+          "include": "per_user_statistics"
+        },
+        {
+          "section": "Pipeline Health",
+          "metrics": [
+            "enquiries_by_stage",
+            "average_completeness",
+            "stale_enquiries_count"
+          ]
+        },
+        {
+          "section": "Top Opportunities",
+          "include": "high_value_enquiries",
+          "limit": 10
+        },
+        {
+          "section": "Action Items",
+          "include": "enquiries_needing_attention"
+        }
+      ],
+      "email_template": {
+        "subject": "Weekly Sales Summary - Week of {week_start_date}",
+        "body_template": "email_templates/weekly_summary.html"
+      }
+    }
+  },
+  "notification_preferences": {
+    "user_configurable": true,
+    "default_preferences": {
+      "in_app_notifications": true,
+      "email_notifications": true,
+      "browser_push": false,
+      "notification_frequency": "immediate",
+      "quiet_hours": {
+        "enabled": false,
+        "start_time": "20:00",
+        "end_time": "08:00",
+        "timezone": "user_timezone"
+      },
+      "digest_preference": {
+        "daily_digest": true,
+        "weekly_summary": true
+      }
+    },
+    "per_notification_override": true,
+    "allow_mute": {
+      "enabled": true,
+      "mute_duration_options": [
+        "1 hour",
+        "4 hours",
+        "Until tomorrow",
+        "1 week"
+      ]
+    }
+  },
+  "notification_queue": {
+    "processing": {
+      "batch_processing": true,
+      "batch_size": 100,
+      "retry_failed": true,
+      "max_retry_attempts": 3,
+      "retry_delay_minutes": 5
+    },
+    "rate_limiting": {
+      "enabled": true,
+      "max_notifications_per_user_per_hour": 20,
+      "max_emails_per_user_per_day": 50
+    },
+    "deduplication": {
+      "enabled": true,
+      "dedup_window_minutes": 15,
+      "dedup_key": [
+        "user_id",
+        "enquiry_id",
+        "notification_type"
+      ]
+    }
+  },
+  "analytics_tracking": {
+    "track_delivery": true,
+    "track_open_rate": true,
+    "track_click_rate": true,
+    "track_action_taken": true,
+    "metrics": [
+      "notification_sent_count",
+      "notification_delivered_count",
+      "notification_opened_count",
+      "notification_clicked_count",
+      "action_completed_count"
+    ],
+    "report_frequency": "weekly"
+  },
+  "metadata": {
+    "total_notification_triggers": 20,
+    "total_reminder_rules": 7,
+    "digest_notifications": 2,
+    "supported_channels": 5,
+    "user_configurable_preferences": true
+  }
+}

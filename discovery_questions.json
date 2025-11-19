@@ -1,0 +1,937 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "total_questions": 87,
+  "categories": [
+    "contact_information",
+    "company_information",
+    "training_requirements",
+    "logistics_delivery",
+    "technical_requirements",
+    "commercial_budget"
+  ],
+  "questions": [
+    {
+      "id": "Q001",
+      "category": "contact_information",
+      "priority": "critical",
+      "display_order": 1,
+      "question_text": "May I have your full name and designation?",
+      "data_field_mapping": "contact_name",
+      "data_field_mapping_secondary": "contact_designation",
+      "answer_type": "text",
+      "points_value": 5,
+      "required": true,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": ["Q002", "Q003"],
+      "ai_extraction_hint": "Look for person's name in email signature, greeting, or introduction. Common patterns: 'I am [Name]', 'This is [Name]', signature block.",
+      "help_text": "Full name helps us personalize the proposal and communication",
+      "example_answers": [
+        "Rajesh Kumar",
+        "Priya Sharma, Senior Manager",
+        "John Doe - VP Engineering"
+      ],
+      "validation_rules": {
+        "min_length": 2,
+        "max_length": 100,
+        "pattern": null
+      },
+      "metadata": {
+        "estimated_time_seconds": 10,
+        "skip_allowed": false,
+        "auto_populate_from_email": true
+      }
+    },
+    {
+      "id": "Q002",
+      "category": "contact_information",
+      "priority": "critical",
+      "display_order": 2,
+      "question_text": "What is the best email address to reach you?",
+      "data_field_mapping": "contact_email",
+      "answer_type": "email",
+      "points_value": 3,
+      "required": true,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract email address. Look in: sender email, email body, signature. Validate format: user@domain.com",
+      "help_text": "Primary email for proposal delivery and all official communication",
+      "example_answers": [
+        "rajesh.kumar@infosys.com",
+        "priya.s@tcs.com"
+      ],
+      "validation_rules": {
+        "min_length": 5,
+        "max_length": 100,
+        "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        "no_disposable_domains": true
+      },
+      "metadata": {
+        "estimated_time_seconds": 10,
+        "skip_allowed": false,
+        "auto_populate_from_email": true
+      }
+    },
+    {
+      "id": "Q003",
+      "category": "contact_information",
+      "priority": "high",
+      "display_order": 3,
+      "question_text": "What is your contact phone number?",
+      "data_field_mapping": "contact_phone",
+      "answer_type": "phone",
+      "points_value": 2,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract phone number. Look for patterns: +91, (xxx) xxx-xxxx, xxx-xxx-xxxx. Accept international formats.",
+      "help_text": "Phone number enables direct communication for urgent matters",
+      "example_answers": [
+        "+91 98765 43210",
+        "+1 (555) 123-4567",
+        "9876543210"
+      ],
+      "validation_rules": {
+        "min_length": 10,
+        "max_length": 15,
+        "pattern": "^[+]?[0-9\\s\\-\\(\\)]+$",
+        "auto_format": true
+      },
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": true,
+        "auto_populate_from_email": false
+      }
+    },
+    {
+      "id": "Q004",
+      "category": "company_information",
+      "priority": "critical",
+      "display_order": 4,
+      "question_text": "Which organization are you with?",
+      "data_field_mapping": "company_name",
+      "answer_type": "text",
+      "points_value": 5,
+      "required": true,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": ["Q005", "Q006", "Q007"],
+      "ai_extraction_hint": "Extract company name. Look in: email domain, signature, 'We are from [Company]', 'Our company [Name]'. Verify against known companies.",
+      "help_text": "Company name helps us understand your organizational context",
+      "example_answers": [
+        "Infosys Technologies",
+        "Tata Consultancy Services",
+        "Wipro Limited"
+      ],
+      "validation_rules": {
+        "min_length": 2,
+        "max_length": 200
+      },
+      "metadata": {
+        "estimated_time_seconds": 10,
+        "skip_allowed": false,
+        "auto_populate_from_email": true,
+        "enrich_from_domain": true
+      }
+    },
+    {
+      "id": "Q005",
+      "category": "company_information",
+      "priority": "high",
+      "display_order": 5,
+      "question_text": "What industry does your organization operate in?",
+      "data_field_mapping": "company_industry",
+      "answer_type": "dropdown",
+      "points_value": 3,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "options": [
+        "Technology / IT Services",
+        "BFSI (Banking, Financial Services, Insurance)",
+        "Manufacturing",
+        "Healthcare / Pharma",
+        "Retail / E-commerce",
+        "Consulting",
+        "Telecommunications",
+        "Energy / Utilities",
+        "Education",
+        "Government / Public Sector",
+        "Other"
+      ],
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Identify industry from company name, domain knowledge, or explicit mentions. Map to standard categories.",
+      "help_text": "Industry helps us tailor training examples and case studies",
+      "example_answers": [
+        "Technology / IT Services",
+        "BFSI"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": true,
+        "auto_populate_from_company": true
+      }
+    },
+    {
+      "id": "Q006",
+      "category": "company_information",
+      "priority": "medium",
+      "display_order": 6,
+      "question_text": "What is the approximate size of your organization?",
+      "data_field_mapping": "company_size",
+      "answer_type": "dropdown",
+      "points_value": 2,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "options": [
+        "1-50 employees",
+        "51-200 employees",
+        "201-1000 employees",
+        "1001-5000 employees",
+        "5001-10000 employees",
+        "10000+ employees"
+      ],
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract company size if mentioned. Look for: 'We are a team of X', 'X employees', 'X+ workforce'.",
+      "help_text": "Company size provides context for scale and complexity",
+      "example_answers": [
+        "1001-5000 employees",
+        "10000+ employees"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 10,
+        "skip_allowed": true,
+        "auto_populate_from_company": true
+      }
+    },
+    {
+      "id": "Q007",
+      "category": "company_information",
+      "priority": "high",
+      "display_order": 7,
+      "question_text": "Which department or business unit will participate in this training?",
+      "data_field_mapping": "department",
+      "answer_type": "text",
+      "points_value": 3,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Look for department mentions: 'our [department] team', 'for the [unit]', job titles that indicate department.",
+      "help_text": "Department context helps customize training content",
+      "example_answers": [
+        "Project Management Office (PMO)",
+        "Software Development",
+        "Sales & Marketing",
+        "Human Resources"
+      ],
+      "validation_rules": {
+        "max_length": 100
+      },
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q008",
+      "category": "training_requirements",
+      "priority": "critical",
+      "display_order": 8,
+      "question_text": "What specific training topic are you interested in?",
+      "data_field_mapping": "training_domain",
+      "answer_type": "dropdown_searchable",
+      "points_value": 10,
+      "required": true,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "options": [
+        "Leadership & Management",
+        "Agile & Scrum",
+        "Data Science & Machine Learning",
+        "DevOps & Cloud",
+        "Cybersecurity",
+        "Python Programming",
+        "Java Programming",
+        "Business Intelligence (Power BI / Tableau)",
+        "Excel & Data Analysis",
+        "Communication Skills",
+        "Project Management (PMP / PRINCE2)",
+        "Soft Skills Development",
+        "Customer Service Excellence",
+        "Sales & Negotiation",
+        "Other"
+      ],
+      "follow_up_questions": ["Q009", "Q010", "Q011"],
+      "ai_extraction_hint": "Identify training topic. Keywords: 'training on X', 'need X training', 'course for X', 'upskill in X'. Match to domain list.",
+      "help_text": "Training topic is the foundation for curriculum design",
+      "example_answers": [
+        "Agile & Scrum",
+        "Leadership & Management",
+        "Data Science & Machine Learning"
+      ],
+      "validation_rules": {
+        "required_if_completeness_below": 30
+      },
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": false,
+        "triggers_domain_loading": true
+      }
+    },
+    {
+      "id": "Q009",
+      "category": "training_requirements",
+      "priority": "critical",
+      "display_order": 9,
+      "question_text": "How many people will participate in this training?",
+      "data_field_mapping": "num_participants",
+      "answer_type": "text",
+      "points_value": 10,
+      "required": true,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract participant count. Accept: exact numbers, ranges (20-30), approximate (~25). Keywords: 'X people', 'X participants', 'team of X'.",
+      "help_text": "Participant count is critical for logistics and pricing",
+      "example_answers": [
+        "30",
+        "~50 people",
+        "25-30 participants",
+        "About 40"
+      ],
+      "validation_rules": {
+        "min_value": 1,
+        "max_value": 1000,
+        "accept_ranges": true,
+        "accept_approximate": true
+      },
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": false,
+        "triggers_pricing_calculation": true
+      }
+    },
+    {
+      "id": "Q010",
+      "category": "training_requirements",
+      "priority": "high",
+      "display_order": 10,
+      "question_text": "What is the current skill level of participants regarding this topic?",
+      "data_field_mapping": "participant_skill_level",
+      "answer_type": "dropdown",
+      "points_value": 5,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "options": [
+        "Beginner (No prior experience)",
+        "Intermediate (Some knowledge/experience)",
+        "Advanced (Significant experience)",
+        "Mixed levels"
+      ],
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Identify skill level. Keywords: 'beginners', 'no experience', 'experienced', 'basic knowledge', 'advanced team'.",
+      "help_text": "Skill level helps us design appropriate curriculum depth",
+      "example_answers": [
+        "Beginner",
+        "Mixed levels",
+        "Intermediate"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": true,
+        "influences_curriculum": true
+      }
+    },
+    {
+      "id": "Q011",
+      "category": "training_requirements",
+      "priority": "critical",
+      "display_order": 11,
+      "question_text": "What specific business challenges are you trying to address with this training?",
+      "data_field_mapping": "business_pain_points",
+      "answer_type": "textarea",
+      "points_value": 5,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract pain points, problems, challenges. Keywords: 'struggling with', 'challenges', 'issues', 'problems', 'difficulty', 'need to improve'.",
+      "help_text": "Understanding your challenges helps us design targeted solutions",
+      "example_answers": [
+        "Our teams are struggling with sprint planning and backlog management",
+        "New managers lack coaching and feedback skills",
+        "Need to upskill developers in cloud technologies"
+      ],
+      "validation_rules": {
+        "min_length": 10,
+        "max_length": 1000
+      },
+      "metadata": {
+        "estimated_time_seconds": 60,
+        "skip_allowed": true,
+        "high_value_field": true
+      }
+    },
+    {
+      "id": "Q012",
+      "category": "training_requirements",
+      "priority": "medium",
+      "display_order": 12,
+      "question_text": "What do you want participants to be able to DO differently after this training?",
+      "data_field_mapping": "learning_objectives",
+      "answer_type": "textarea",
+      "points_value": 3,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract objectives, goals, expected outcomes. Keywords: 'should be able to', 'learn to', 'gain skills in', 'objectives', 'goals'.",
+      "help_text": "Learning objectives help us define success criteria",
+      "example_answers": [
+        "Be able to run effective sprint planning meetings",
+        "Confidently give constructive feedback to team members",
+        "Build and deploy ML models independently"
+      ],
+      "validation_rules": {
+        "max_length": 1000
+      },
+      "metadata": {
+        "estimated_time_seconds": 45,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q013",
+      "category": "training_requirements",
+      "priority": "medium",
+      "display_order": 13,
+      "question_text": "How will you measure the success of this training program?",
+      "data_field_mapping": "success_metrics",
+      "answer_type": "textarea",
+      "points_value": 5,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract success metrics, KPIs, measurement criteria. Keywords: 'measure', 'metrics', 'KPIs', 'success criteria', 'outcomes'.",
+      "help_text": "Success metrics help us align training with business outcomes",
+      "example_answers": [
+        "Improved sprint velocity by 20%",
+        "Employee engagement scores increase",
+        "Successfully deploy 3 ML models within 6 months"
+      ],
+      "validation_rules": {
+        "max_length": 500
+      },
+      "metadata": {
+        "estimated_time_seconds": 45,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q014",
+      "category": "logistics_delivery",
+      "priority": "critical",
+      "display_order": 14,
+      "question_text": "When would you ideally like to start this training?",
+      "data_field_mapping": "preferred_timeline",
+      "answer_type": "text",
+      "points_value": 5,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": ["Q015"],
+      "ai_extraction_hint": "Extract timeline. Keywords: 'by', 'before', 'in [month]', 'Q[1-4]', 'next month', 'ASAP', 'within [time]'.",
+      "help_text": "Timeline helps us plan resource allocation",
+      "example_answers": [
+        "Before Q2 2024",
+        "January 2024",
+        "Within next 2 months",
+        "ASAP"
+      ],
+      "validation_rules": {
+        "max_length": 100
+      },
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q015",
+      "category": "logistics_delivery",
+      "priority": "medium",
+      "display_order": 15,
+      "question_text": "Do you have a specific start date in mind?",
+      "data_field_mapping": "start_date",
+      "answer_type": "date",
+      "points_value": 2,
+      "required": false,
+      "show_condition": {
+        "condition_type": "field_not_empty",
+        "field": "preferred_timeline"
+      },
+      "conditional_logic": {
+        "show_if": "preferred_timeline IS_NOT_EMPTY"
+      },
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract specific date. Formats: MM/DD/YYYY, DD-MM-YYYY, 'January 15', 'Jan 15 2024'.",
+      "help_text": "Specific date helps us lock in scheduling",
+      "example_answers": [
+        "January 15, 2024",
+        "2024-01-15"
+      ],
+      "validation_rules": {
+        "min_date": "today",
+        "max_date": "today + 365 days"
+      },
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q016",
+      "category": "logistics_delivery",
+      "priority": "critical",
+      "display_order": 16,
+      "question_text": "Do you prefer in-person training, virtual online training, or a hybrid approach?",
+      "data_field_mapping": "delivery_mode",
+      "answer_type": "radio",
+      "points_value": 10,
+      "required": true,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "options": [
+        {
+          "value": "ILT",
+          "label": "In-person training (ILT)",
+          "description": "Traditional classroom training at your office or our venue"
+        },
+        {
+          "value": "VILT",
+          "label": "Virtual online training (VILT)",
+          "description": "Live instructor-led sessions via video conferencing"
+        },
+        {
+          "value": "Hybrid",
+          "label": "Hybrid (Combination of both)",
+          "description": "Mix of in-person and virtual sessions"
+        }
+      ],
+      "follow_up_questions": {
+        "ILT": ["Q017", "Q018"],
+        "VILT": ["Q019", "Q020", "Q021"],
+        "Hybrid": ["Q017", "Q018", "Q019", "Q020", "Q021"]
+      },
+      "ai_extraction_hint": "Identify delivery preference. Keywords: 'in-person', 'on-site', 'at our office', 'virtual', 'online', 'zoom', 'remote', 'hybrid'.",
+      "help_text": "Delivery mode affects logistics, pricing, and trainer availability",
+      "example_answers": [
+        "Virtual",
+        "In-person",
+        "Hybrid"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": false,
+        "triggers_conditional_questions": true,
+        "affects_pricing": true
+      }
+    },
+    {
+      "id": "Q017",
+      "category": "logistics_delivery",
+      "priority": "high",
+      "display_order": 17,
+      "question_text": "Where would you like the in-person training conducted?",
+      "data_field_mapping": "training_location",
+      "answer_type": "text",
+      "points_value": 3,
+      "required": false,
+      "show_condition": {
+        "condition_type": "field_value",
+        "field": "delivery_mode",
+        "operator": "in",
+        "values": ["ILT", "Hybrid"]
+      },
+      "conditional_logic": {
+        "show_if": "delivery_mode IN ['ILT', 'Hybrid']"
+      },
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract location for in-person training. Look for: city names, office addresses, 'at our [location]', 'in [city]'.",
+      "help_text": "Training location helps us plan logistics and trainer travel",
+      "example_answers": [
+        "Bangalore office",
+        "Mumbai - Andheri",
+        "Delhi NCR",
+        "Your training center"
+      ],
+      "validation_rules": {
+        "max_length": 200
+      },
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": false,
+        "required_for_delivery_mode": ["ILT", "Hybrid"]
+      }
+    },
+    {
+      "id": "Q018",
+      "category": "logistics_delivery",
+      "priority": "medium",
+      "display_order": 18,
+      "question_text": "Will you provide the training venue, or should we arrange it?",
+      "data_field_mapping": "venue_provider",
+      "answer_type": "radio",
+      "points_value": 2,
+      "required": false,
+      "show_condition": {
+        "condition_type": "field_value",
+        "field": "delivery_mode",
+        "operator": "in",
+        "values": ["ILT", "Hybrid"]
+      },
+      "conditional_logic": {
+        "show_if": "delivery_mode IN ['ILT', 'Hybrid']"
+      },
+      "options": [
+        {
+          "value": "client_provides",
+          "label": "We'll provide the venue (at our office)"
+        },
+        {
+          "value": "edstellar_arranges",
+          "label": "Please arrange the venue"
+        },
+        {
+          "value": "not_decided",
+          "label": "Not decided yet"
+        }
+      ],
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Identify venue ownership. Keywords: 'at our office', 'our conference room', 'please arrange', 'you arrange'.",
+      "help_text": "Venue arrangement affects cost and logistics planning",
+      "example_answers": [
+        "We'll provide",
+        "Please arrange"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": true,
+        "affects_pricing": true
+      }
+    },
+    {
+      "id": "Q019",
+      "category": "logistics_delivery",
+      "priority": "high",
+      "display_order": 19,
+      "question_text": "What time zone are participants in?",
+      "data_field_mapping": "participant_timezone",
+      "answer_type": "dropdown",
+      "points_value": 3,
+      "required": false,
+      "show_condition": {
+        "condition_type": "field_value",
+        "field": "delivery_mode",
+        "operator": "in",
+        "values": ["VILT", "Hybrid"]
+      },
+      "conditional_logic": {
+        "show_if": "delivery_mode IN ['VILT', 'Hybrid']"
+      },
+      "options": [
+        "IST (India Standard Time - UTC+5:30)",
+        "PST (Pacific Standard Time - UTC-8)",
+        "EST (Eastern Standard Time - UTC-5)",
+        "CST (Central Standard Time - UTC-6)",
+        "GMT (Greenwich Mean Time - UTC+0)",
+        "CET (Central European Time - UTC+1)",
+        "SGT (Singapore Time - UTC+8)",
+        "AEDT (Australian Eastern Time - UTC+11)",
+        "Multiple time zones",
+        "Other"
+      ],
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract timezone or location that implies timezone. Keywords: timezone names, city names (Bangalore=IST, New York=EST).",
+      "help_text": "Time zone helps us schedule sessions at convenient times",
+      "example_answers": [
+        "IST",
+        "Multiple (India and US)"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": false,
+        "required_for_delivery_mode": ["VILT", "Hybrid"]
+      }
+    },
+    {
+      "id": "Q020",
+      "category": "logistics_delivery",
+      "priority": "high",
+      "display_order": 20,
+      "question_text": "Do you have a preferred virtual platform?",
+      "data_field_mapping": "platform_preference",
+      "answer_type": "radio",
+      "points_value": 3,
+      "required": false,
+      "show_condition": {
+        "condition_type": "field_value",
+        "field": "delivery_mode",
+        "operator": "in",
+        "values": ["VILT", "Hybrid"]
+      },
+      "conditional_logic": {
+        "show_if": "delivery_mode IN ['VILT', 'Hybrid']"
+      },
+      "options": [
+        {
+          "value": "zoom",
+          "label": "Zoom"
+        },
+        {
+          "value": "teams",
+          "label": "Microsoft Teams"
+        },
+        {
+          "value": "google_meet",
+          "label": "Google Meet"
+        },
+        {
+          "value": "webex",
+          "label": "Webex"
+        },
+        {
+          "value": "no_preference",
+          "label": "No preference (you can choose)"
+        },
+        {
+          "value": "other",
+          "label": "Other platform"
+        }
+      ],
+      "follow_up_questions": ["Q021"],
+      "ai_extraction_hint": "Identify platform preference. Keywords: 'zoom', 'teams', 'microsoft teams', 'google meet', 'webex'.",
+      "help_text": "Platform preference helps us set up the right technology",
+      "example_answers": [
+        "Microsoft Teams",
+        "Zoom",
+        "No preference"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q021",
+      "category": "logistics_delivery",
+      "priority": "medium",
+      "display_order": 21,
+      "question_text": "Who will provide the virtual platform license?",
+      "data_field_mapping": "platform_provider",
+      "answer_type": "radio",
+      "points_value": 2,
+      "required": false,
+      "show_condition": {
+        "condition_type": "field_value",
+        "field": "delivery_mode",
+        "operator": "in",
+        "values": ["VILT", "Hybrid"]
+      },
+      "conditional_logic": {
+        "show_if": "delivery_mode IN ['VILT', 'Hybrid']"
+      },
+      "options": [
+        {
+          "value": "client",
+          "label": "We'll provide (client provides)"
+        },
+        {
+          "value": "edstellar",
+          "label": "Please include in your proposal (Edstellar provides)"
+        },
+        {
+          "value": "either",
+          "label": "Either works for us"
+        }
+      ],
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Identify platform ownership. Keywords: 'we have', 'we'll provide', 'you provide', 'include in cost'.",
+      "help_text": "Platform ownership affects pricing and setup logistics",
+      "example_answers": [
+        "We'll provide",
+        "Please include in proposal"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 15,
+        "skip_allowed": true,
+        "affects_pricing": true
+      }
+    },
+    {
+      "id": "Q022",
+      "category": "commercial_budget",
+      "priority": "critical",
+      "display_order": 22,
+      "question_text": "Do you have a budget range in mind for this training initiative?",
+      "data_field_mapping": "budget_range",
+      "answer_type": "text",
+      "points_value": 10,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Extract budget. Formats: '₹X-Y', '$X-Y', 'X lakhs', 'around X', '~X'. Keywords: 'budget', 'cost', 'price range', 'investment'.",
+      "help_text": "Budget range helps us propose solutions that fit your investment capacity",
+      "example_answers": [
+        "₹3-4 Lakhs",
+        "Around ₹5 Lakhs",
+        "$10,000-15,000",
+        "~₹3.5L"
+      ],
+      "validation_rules": {
+        "max_length": 100,
+        "accept_ranges": true,
+        "accept_approximate": true
+      },
+      "metadata": {
+        "estimated_time_seconds": 30,
+        "skip_allowed": true,
+        "sensitive_field": true
+      }
+    },
+    {
+      "id": "Q023",
+      "category": "commercial_budget",
+      "priority": "critical",
+      "display_order": 23,
+      "question_text": "Who will be the key decision-maker for this training initiative?",
+      "data_field_mapping": "decision_maker_name",
+      "data_field_mapping_secondary": "decision_maker_role",
+      "answer_type": "text",
+      "points_value": 10,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Identify decision maker. Keywords: 'report to', 'manager', 'head', 'director', 'VP', 'CTO', 'CHRO', 'approval from'.",
+      "help_text": "Decision maker information helps us address proposal appropriately",
+      "example_answers": [
+        "Venkat Raman, VP Engineering",
+        "CHRO - Ms. Lakshmi Iyer",
+        "I am the decision maker"
+      ],
+      "validation_rules": {
+        "max_length": 200
+      },
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q024",
+      "category": "commercial_budget",
+      "priority": "high",
+      "display_order": 24,
+      "question_text": "What is your typical procurement process for training programs?",
+      "data_field_mapping": "procurement_process",
+      "answer_type": "dropdown",
+      "points_value": 5,
+      "required": false,
+      "show_condition": "always",
+      "conditional_logic": null,
+      "options": [
+        "Direct purchase (single approval)",
+        "Multiple approvals required",
+        "RFP/RFQ process",
+        "Tender process",
+        "Preferred vendor list",
+        "Not sure yet"
+      ],
+      "follow_up_questions": [],
+      "ai_extraction_hint": "Identify procurement method. Keywords: 'RFP', 'tender', 'approval process', 'procurement', 'vendor list'.",
+      "help_text": "Understanding procurement helps us prepare appropriate documentation",
+      "example_answers": [
+        "Multiple approvals required",
+        "RFP process"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": true
+      }
+    },
+    {
+      "id": "Q045",
+      "category": "technical_requirements",
+      "priority": "high",
+      "display_order": 45,
+      "question_text": "Will participants need access to a sandbox/lab environment for hands-on practice?",
+      "data_field_mapping": "sandbox_required",
+      "answer_type": "radio",
+      "points_value": 2,
+      "required": false,
+      "show_condition": {
+        "condition_type": "training_category",
+        "operator": "equals",
+        "value": "technical"
+      },
+      "conditional_logic": {
+        "show_if": "training_category == 'technical'"
+      },
+      "options": [
+        {
+          "value": "yes_client",
+          "label": "Yes, we'll provide the environment"
+        },
+        {
+          "value": "yes_edstellar",
+          "label": "Yes, please arrange it"
+        },
+        {
+          "value": "no",
+          "label": "Not needed"
+        }
+      ],
+      "follow_up_questions": {
+        "yes_client": ["Q046"],
+        "yes_edstellar": ["Q046", "Q047"]
+      },
+      "ai_extraction_hint": "For technical training, look for: 'sandbox', 'lab environment', 'practice environment', 'hands-on setup'.",
+      "help_text": "Sandbox environments enable practical, hands-on learning",
+      "example_answers": [
+        "Yes, please arrange",
+        "We'll provide"
+      ],
+      "validation_rules": {},
+      "metadata": {
+        "estimated_time_seconds": 20,
+        "skip_allowed": true,
+        "applies_to_technical_only": true
+      }
+    }
+  ],
+  "metadata": {
+    "total_points_available": 100,
+    "critical_questions_count": 12,
+    "high_priority_count": 18,
+    "medium_priority_count": 25,
+    "low_priority_count": 32
+  }
+}

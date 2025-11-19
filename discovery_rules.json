@@ -1,0 +1,114 @@
+{
+  "discovery_questions": {
+    "contact_information": {
+      "category": "Contact Details",
+      "questions": [
+        {
+          "id": "contact_name",
+          "question": "Ask the client: Could you please share your full name?",
+          "trigger": "missing_name",
+          "priority": 1
+        },
+        {
+          "id": "contact_email",
+          "question": "Ask the client: What's the best email address to reach you?",
+          "trigger": "missing_email",
+          "priority": 1
+        },
+        {
+          "id": "contact_phone",
+          "question": "Ask the client: Could you provide a contact phone number?",
+          "trigger": "missing_phone",
+          "priority": 1
+        },
+        {
+          "id": "contact_company",
+          "question": "Ask the client: Which company or organization are you representing?",
+          "trigger": "missing_company",
+          "priority": 1
+        }
+      ]
+    },
+    "training_details": {
+      "category": "Training Requirements",
+      "questions": [
+        {
+          "id": "training_topic",
+          "question": "Ask the client: What specific training topic or course is your team interested in?",
+          "trigger": "missing_training_topic",
+          "priority": 2
+        },
+        {
+          "id": "participant_count",
+          "question": "Ask the client: How many team members will be participating in this training?",
+          "trigger": "missing_participant_count",
+          "priority": 2
+        },
+        {
+          "id": "training_dates",
+          "question": "Ask the client: When would you ideally like to schedule this training? Do you have preferred dates or a timeframe in mind?",
+          "trigger": "missing_dates",
+          "priority": 3
+        },
+        {
+          "id": "training_objectives",
+          "question": "Ask the client: What specific goals or outcomes are you hoping to achieve with this training?",
+          "trigger": "missing_objectives",
+          "priority": 3
+        },
+        {
+          "id": "current_skill_level",
+          "question": "Ask the client: What is the current skill level of your team members? (Beginner/Intermediate/Advanced)",
+          "trigger": "missing_skill_level",
+          "priority": 4
+        },
+        {
+          "id": "training_format",
+          "question": "Ask the client: Would you prefer online training, in-person training, or a hybrid approach?",
+          "trigger": "missing_format",
+          "priority": 4
+        }
+      ]
+    },
+    "budget_and_logistics": {
+      "category": "Budget & Logistics",
+      "questions": [
+        {
+          "id": "budget_range",
+          "question": "Ask the client: Do you have a budget range in mind for this training program?",
+          "trigger": "missing_budget",
+          "priority": 5
+        },
+        {
+          "id": "location",
+          "question": "Ask the client: If you prefer in-person training, what location works best for your team?",
+          "trigger": "missing_location",
+          "priority": 5
+        },
+        {
+          "id": "decision_timeline",
+          "question": "Ask the client: What's your timeline for making a decision on this training?",
+          "trigger": "missing_timeline",
+          "priority": 5
+        }
+      ]
+    }
+  },
+  "classification_rules": {
+    "no_detailed": {
+      "show_questions_from": ["contact_information", "training_details"],
+      "max_questions": 6,
+      "sales_guidance": "This enquiry needs significant follow-up. Focus on gathering both contact information and training requirements."
+    },
+    "semi_detailed": {
+      "show_questions_from": ["contact_information", "training_details"],
+      "max_questions": 4,
+      "sales_guidance": "This enquiry is partially complete. Gather the missing information to move forward with a proposal."
+    },
+    "detailed": {
+      "show_questions_from": ["budget_and_logistics"],
+      "max_questions": 2,
+      "sales_guidance": "Great! This enquiry has all essential information. You can proceed with preparing a proposal. Consider asking these additional questions to refine the offering."
+    }
+  }
+}

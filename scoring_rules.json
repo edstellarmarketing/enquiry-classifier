@@ -1,0 +1,387 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "Completeness scoring rules and thresholds for SalesIQ",
+  "total_points": 100,
+  "categories": [
+    {
+      "id": "contact_information",
+      "name": "Basic Contact Information",
+      "points_total": 20,
+      "weight_percentage": 20,
+      "color": "#3B82F6",
+      "icon": "👤",
+      "description": "Essential contact details for communication",
+      "fields": [
+        {
+          "field_name": "contact_name",
+          "points": 5,
+          "required": true,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "contact_designation",
+          "points": 5,
+          "required": true,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "company_name",
+          "points": 5,
+          "required": true,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "contact_email",
+          "points": 3,
+          "required": true,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "contact_phone",
+          "points": 2,
+          "required": false,
+          "criticality": "high"
+        }
+      ]
+    },
+    {
+      "id": "training_requirements",
+      "name": "Training Requirements",
+      "points_total": 30,
+      "weight_percentage": 30,
+      "color": "#10B981",
+      "icon": "📚",
+      "description": "Core training needs and objectives",
+      "fields": [
+        {
+          "field_name": "training_domain",
+          "points": 10,
+          "required": true,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "num_participants",
+          "points": 10,
+          "required": true,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "participant_skill_level",
+          "points": 5,
+          "required": false,
+          "criticality": "high"
+        },
+        {
+          "field_name": "business_pain_points",
+          "points": 5,
+          "required": false,
+          "criticality": "high"
+        }
+      ]
+    },
+    {
+      "id": "delivery_preferences",
+      "name": "Delivery Preferences",
+      "points_total": 20,
+      "weight_percentage": 20,
+      "color": "#F59E0B",
+      "icon": "🚀",
+      "description": "Logistics and delivery requirements",
+      "fields": [
+        {
+          "field_name": "delivery_mode",
+          "points": 10,
+          "required": true,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "preferred_timeline",
+          "points": 5,
+          "required": false,
+          "criticality": "high"
+        },
+        {
+          "field_name": "platform_preference",
+          "points": 3,
+          "required": false,
+          "criticality": "medium",
+          "conditional": "delivery_mode IN ['VILT', 'Hybrid']"
+        },
+        {
+          "field_name": "technical_requirements",
+          "points": 2,
+          "required": false,
+          "criticality": "medium",
+          "conditional": "training_category == 'technical'"
+        }
+      ]
+    },
+    {
+      "id": "commercial_decision",
+      "name": "Commercial & Decision Making",
+      "points_total": 30,
+      "weight_percentage": 30,
+      "color": "#8B5CF6",
+      "icon": "💼",
+      "description": "Budget and decision-making information",
+      "fields": [
+        {
+          "field_name": "budget_range",
+          "points": 10,
+          "required": false,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "decision_maker_name",
+          "points": 10,
+          "required": false,
+          "criticality": "critical"
+        },
+        {
+          "field_name": "procurement_process",
+          "points": 5,
+          "required": false,
+          "criticality": "high"
+        },
+        {
+          "field_name": "success_metrics",
+          "points": 5,
+          "required": false,
+          "criticality": "medium"
+        }
+      ]
+    }
+  ],
+  "completeness_levels": [
+    {
+      "level": "INCOMPLETE",
+      "min_percentage": 0,
+      "max_percentage": 30,
+      "color": "#EF4444",
+      "color_name": "red",
+      "icon": "🔴",
+      "label": "Incomplete",
+      "description": "Critical information missing",
+      "ui_message": "Complete more fields to proceed",
+      "actions_allowed": [
+        "edit",
+        "save_draft",
+        "delete"
+      ],
+      "actions_blocked": [
+        "generate_proposal"
+      ],
+      "auto_reminders": {
+        "enabled": true,
+        "trigger_after_days": 3,
+        "message": "This enquiry needs attention - critical information missing"
+      }
+    },
+    {
+      "level": "SEMI_COMPLETE",
+      "min_percentage": 31,
+      "max_percentage": 60,
+      "color": "#F59E0B",
+      "color_name": "yellow",
+      "icon": "🟡",
+      "label": "Semi-Complete",
+      "description": "Good progress, key gaps remain",
+      "ui_message": "Answer {remaining_critical} more questions to unlock proposal builder",
+      "actions_allowed": [
+        "edit",
+        "save_draft",
+        "generate_discovery_email",
+        "delete"
+      ],
+      "actions_blocked": [
+        "generate_proposal"
+      ],
+      "auto_reminders": {
+        "enabled": true,
+        "trigger_after_days": 5,
+        "message": "You're close! Complete remaining fields to generate proposal"
+      }
+    },
+    {
+      "level": "COMPLETE",
+      "min_percentage": 61,
+      "max_percentage": 100,
+      "color": "#10B981",
+      "color_name": "green",
+      "icon": "🟢",
+      "label": "Complete",
+      "description": "Proposal-ready",
+      "ui_message": "Great! You have enough information to generate a professional proposal",
+      "actions_allowed": [
+        "edit",
+        "save_draft",
+        "generate_proposal",
+        "generate_discovery_email",
+        "delete"
+      ],
+      "actions_blocked": [],
+      "auto_notifications": {
+        "enabled": true,
+        "message": "🎉 Enquiry {enquiry_id} is ready for proposal generation!"
+      }
+    }
+  ],
+  "milestone_requirements": [
+    {
+      "milestone": 1,
+      "name": "Initial Enquiry Capture",
+      "min_completeness_percentage": 10,
+      "description": "Basic enquiry captured and logged",
+      "required_fields": [
+        "training_domain"
+      ],
+      "unlock_message": "Enquiry captured successfully"
+    },
+    {
+      "milestone": 2,
+      "name": "Requirement Discovery",
+      "min_completeness_percentage": 30,
+      "description": "Core requirements gathered",
+      "required_fields": [
+        "contact_name",
+        "company_name",
+        "training_domain",
+        "num_participants"
+      ],
+      "unlock_message": "Discovery phase in progress"
+    },
+    {
+      "milestone": 3,
+      "name": "Proposal Preparation",
+      "min_completeness_percentage": 60,
+      "description": "Ready to generate proposal",
+      "required_fields": [
+        "contact_name",
+        "contact_email",
+        "company_name",
+        "training_domain",
+        "num_participants",
+        "delivery_mode",
+        "preferred_timeline",
+        "decision_maker_name"
+      ],
+      "optional_but_recommended": [
+        "budget_range",
+        "business_pain_points",
+        "contact_phone"
+      ],
+      "unlock_message": "🎉 Proposal Builder Unlocked!",
+      "unlock_celebration": true
+    }
+  ],
+  "proposal_unlock_requirements": {
+    "threshold_percentage": 60,
+    "mandatory_fields": [
+      "contact_name",
+      "contact_email",
+      "company_name",
+      "training_domain",
+      "num_participants",
+      "delivery_mode",
+      "preferred_timeline",
+      "decision_maker_name"
+    ],
+    "conditional_requirements": [
+      {
+        "condition": "delivery_mode == 'VILT'",
+        "additional_required_fields": [
+          "participant_timezone",
+          "platform_preference"
+        ]
+      },
+      {
+        "condition": "training_category == 'technical'",
+        "additional_required_fields": [
+          "sandbox_required"
+        ]
+      },
+      {
+        "condition": "num_participants > 50",
+        "warnings": [
+          "Large group - consider batch training approach"
+        ]
+      }
+    ],
+    "quality_recommendations": {
+      "high_quality_threshold": 80,
+      "recommended_fields": [
+        "budget_range",
+        "business_pain_points",
+        "learning_objectives",
+        "success_metrics",
+        "participant_skill_level"
+      ],
+      "message": "Add these optional fields to improve proposal quality"
+    }
+  },
+  "scoring_calculation_rules": {
+    "default_calculation": "sum_of_filled_fields",
+    "partial_credit": {
+      "enabled": true,
+      "rules": [
+        {
+          "field": "budget_range",
+          "partial_conditions": [
+            {
+              "condition": "contains_approximate_value",
+              "credit_percentage": 70,
+              "examples": ["around 5L", "~5 Lakhs"]
+            },
+            {
+              "condition": "contains_range",
+              "credit_percentage": 100,
+              "examples": ["3-4 Lakhs", "₹3L-₹5L"]
+            }
+          ]
+        },
+        {
+          "field": "num_participants",
+          "partial_conditions": [
+            {
+              "condition": "exact_number",
+              "credit_percentage": 100
+            },
+            {
+              "condition": "approximate",
+              "credit_percentage": 80,
+              "examples": ["~30", "about 25"]
+            },
+            {
+              "condition": "range",
+              "credit_percentage": 90,
+              "examples": ["25-30", "between 20-25"]
+            }
+          ]
+        }
+      ]
+    },
+    "bonus_points": {
+      "enabled": true,
+      "rules": [
+        {
+          "condition": "technical_requirements_documented_for_technical_training",
+          "bonus_points": 2,
+          "description": "Bonus for documenting technical setup needs"
+        },
+        {
+          "condition": "multiple_pain_points_documented",
+          "bonus_points": 1,
+          "description": "Bonus for detailed pain point analysis"
+        }
+      ]
+    }
+  },
+  "validation_rules": {
+    "minimum_for_save": 10,
+    "warn_if_below": 30,
+    "recommend_discovery_call_if_below": 40,
+    "auto_save_enabled": true,
+    "auto_save_interval_seconds": 30
+  }
+}
